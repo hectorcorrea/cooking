@@ -2,12 +2,19 @@ var dbRecipes = require('./dbRecipes');
 
 var getAll = function(cb) {
 
-  dbRecipes.fetchAll(function(err, items) {
-    cb(err, items);
+  dbRecipes.fetchAll(function(err, documents) {
+    cb(err, documents);
   });
 
 }
 
+var getOne = function(key, url, cb) {
+
+  dbRecipes.fetchOne(key, url, function(err, document) {
+    cb(err, document);
+  });
+
+}
 var addOne = function(data, cb) {
 
   dbRecipes.addNew(data, function(err, savedDoc) {
@@ -34,6 +41,7 @@ var editOne = function(data, cb) {
 
 module.exports = {
   getAll: getAll,
+  getOne: getOne,
   addOne: addOne,
   editOne: editOne
 }

@@ -1,0 +1,29 @@
+<% include layoutTop %>
+
+<div class="row">
+
+  <div class="eight columns">
+    <h3>All My Recipes</h3>
+  </div>
+</div>
+
+<% for(r = 0; r < recipes.length; r++) { %>
+  
+  <% var recipe = recipes[r] %>
+
+  <div class="row">
+    <div class="four columns">
+      <p><a href="<%= recipe.link %>"><%= recipe.name %></a></p>
+    </div>
+  </div>
+
+<% } %>
+
+<div class="row">
+  <div class="eight columns">
+    <p><a href="/recipe/new" class="button">New Recipe</a>
+    </p>
+  </div>
+</div>
+
+<% include layoutBottom %>

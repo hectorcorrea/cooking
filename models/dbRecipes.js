@@ -3,19 +3,21 @@ var dbUrl = "mongodb://localhost:27017/recipes";
 var dbCollection = "recipes";
 
 
-var fetchByKey = function(searchKey, callback) {
+var fetchOne = function(key, url, callback) {
 
   MongoClient.connect(dbUrl, function(err, db) {
 
     if(err) return callback(err);
 
     var collection = db.collection(dbCollection);
-    var query = {key: searchKey};
+    var query = {key: key, url: url};
     collection.find(query).toArray(function(err, items){
 
       db.close();
       
       if(err) return callback(err);
+
+      console.dir(items);
       
       if(items.length === 1) {
         // just what we want
@@ -23,7 +25,7 @@ var fetchByKey = function(searchKey, callback) {
       }
       else if(items.length > 1) {
         // oops! how come we got more than one?
-        callback("Error: more than one record found for key [" + searchKey + "]");
+        callback("Error: more than one record found for key [" + key + ", " + url + "]");
       }
       else {
         // no record found
@@ -119,7 +121,7 @@ var addNew = function(data, callback) {
 }
 
 module.exports = {
-  fetchByKey: fetchByKey,
+  fetchOne: fetchOne,
   fetchAll: fetchAll,
   addNew: addNew,
   updateByKey: updateByKey
