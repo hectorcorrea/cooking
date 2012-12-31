@@ -11,7 +11,7 @@ var save = function(req, res) {}
 
 var viewAll = function(req, res) {
 
-  var m = model.recipes(req.app.settings.dbUrl);
+  var m = model.recipes(req.app.settings.config.dbUrl);
   m.getAll(function(err, documents){
 
     var recipes = [];
@@ -40,7 +40,7 @@ var viewOne = function(req, res) {
 
   var key = parseInt(req.params.key)
   var url = req.params.url;
-  var m = model.recipes(req.app.settings.dbUrl);
+  var m = model.recipes(req.app.settings.config.dbUrl);
 
   console.log(key + ", " + url);
   m.getOne(key, url, function(err, doc){

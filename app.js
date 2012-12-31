@@ -2,7 +2,7 @@ var express = require('express');
 var path = require('path');
 var ejs = require('ejs');
 var http = require('http');
-var settings = require('./settings');
+var settingsUtil = require('./settings');
 var recipeRoutes = require('./routes/recipeRoutes');
 var siteRoutes = require('./routes/siteRoutes');
 
@@ -43,16 +43,23 @@ app.configure('development', function() {
   app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
   var settingsFile = __dirname + "/settings.dev.json";
   console.log('Loading settings from ' + settingsFile);
-  app.set("settings", settings.load(settingsFile));
+  app.set("config", settingsUtil.load(settingsFile));
 }); 
 
 
 // Production settings
 app.configure('production', function() {
-  app.use(express.errorHandler());
+  app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
   var settingsFile = __dirname + "/settings.prod.json";
   console.log('Loading settings from ' + settingsFile);
-  app.set("settings", settings.load(settingsFile));
+  var settings = settingsUtil.load(settingsFile);
+  if(process.env.DB_URL) {
+    settings.dbUrl = process.env.DB_URL;
+  }
+  else {
+    console.log("This is not good. No DB_URL environment variable was found.");
+  }
+  app.set("config", settings);
 });
 
 
