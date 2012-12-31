@@ -1,4 +1,4 @@
-var recipeModel = require('../models/recipeModel');
+var model = require('../models/recipeModel');
 
 var _notFound = function(req, res) {
   res.status(404).render('404.ejs', { status: 404, message: 'Recipe not found' });
@@ -11,7 +11,8 @@ var save = function(req, res) {}
 
 var viewAll = function(req, res) {
 
-  recipeModel.getAll(function(err, documents){
+  var m = model.recipes(req.app.settings.dbUrl);
+  m.getAll(function(err, documents){
 
     var recipes = [];
     var i, recipe, doc; 
@@ -39,9 +40,10 @@ var viewOne = function(req, res) {
 
   var key = parseInt(req.params.key)
   var url = req.params.url;
-  console.log(key + ", " + url);
+  var m = model.recipes(req.app.settings.dbUrl);
 
-  recipeModel.getOne(key, url, function(err, doc){
+  console.log(key + ", " + url);
+  m.getOne(key, url, function(err, doc){
 
     if(err) {
       res.status(500).render('500.ejs', {message: err});

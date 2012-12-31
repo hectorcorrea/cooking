@@ -2,6 +2,7 @@ var express = require('express');
 var path = require('path');
 var ejs = require('ejs');
 var http = require('http');
+var settings = require('./settings');
 var recipeRoutes = require('./routes/recipeRoutes');
 var siteRoutes = require('./routes/siteRoutes');
 
@@ -37,10 +38,22 @@ app.configure(function() {
 }); 
 
 
-// Settings
+// Development settings
 app.configure('development', function() {
   app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
+  var settingsFile = __dirname + "/settings.dev.json";
+  console.log('Loading settings from ' + settingsFile);
+  app.set("settings", settings.load(settingsFile));
 }); 
+
+
+// Production settings
+app.configure('production', function() {
+  app.use(express.errorHandler());
+  var settingsFile = __dirname + "/settings.prod.json";
+  console.log('Loading settings from ' + settingsFile);
+  app.set("settings", settings.load(settingsFile));
+});
 
 
 // Routes
