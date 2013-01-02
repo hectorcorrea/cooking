@@ -1,10 +1,17 @@
 var express = require('express');
+var fs = require('fs');
 var path = require('path');
 var ejs = require('ejs');
 var http = require('http');
 var settingsUtil = require('./settings');
 var recipeRoutes = require('./routes/recipeRoutes');
 var siteRoutes = require('./routes/siteRoutes');
+var logger = require('./logger');
+
+
+//use {flags: 'w'} to open in write mode, {flags: 'a'} to append
+//var logFile = fs.createWriteStream('./myLogFile.log', {flags: 'a'}); 
+logger.init(__dirname, 'INFO');
 
 
 // Configuration
@@ -17,7 +24,6 @@ app.configure(function() {
   app.set('view engine', 'ejs');
 
   app.use(express.favicon());
-  app.use(express.logger('dev'));
 
   app.use(express.bodyParser());
   app.use(express.methodOverride());
@@ -25,7 +31,10 @@ app.configure(function() {
   app.use(express.cookieParser('your secret here'));
   app.use(express.session());
 
+  // static must appear before app.router!
   app.use(express.static(path.join(__dirname, 'public'))); 
+  app.use(express.logger('dev'));
+  // app.use(express.logger({format: 'short', stream: logFile}));
   app.use(app.router);
 
   // Global error handler

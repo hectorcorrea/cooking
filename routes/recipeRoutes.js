@@ -1,16 +1,29 @@
 var model = require('../models/recipeModel');
+var logger = require('../logger');
 
-var _notFound = function(req, res) {
+
+var notFound = function(req, res, key) {
+  logger.warn("recipeRoutes.notFound. Key [" + key + "]");
   res.status(404).render('404.ejs', { status: 404, message: 'Recipe not found' });
 }
+
+
+var error = function(req, res, title, err) {
+  logger.error(title, err);
+  res.status(500).render('500.ejs', {message: err});
+}
+
 
 var editNew = function(req, res) {}
 var saveNew = function(req, res) {}
 var edit = function(req, res) {}
 var save = function(req, res) {}
 
+
 var viewAll = function(req, res) {
 
+  logger.info("recipeRoutes.viewAll");
+  
   var m = model.recipes(req.app.settings.config.dbUrl);
   m.getAll(function(err, documents){
 
@@ -18,7 +31,7 @@ var viewAll = function(req, res) {
     var i, recipe, doc; 
 
     if(err) {
-      res.status(500).render('500.ejs', {message: err});
+      error(req, res, "Error fetching all recipes", err);
       return;
     }
 
@@ -36,6 +49,7 @@ var viewAll = function(req, res) {
   });
 }
 
+
 var viewOne = function(req, res) {
 
   var key = parseInt(req.params.key)
@@ -46,12 +60,12 @@ var viewOne = function(req, res) {
   m.getOne(key, url, function(err, doc){
 
     if(err) {
-      res.status(500).render('500.ejs', {message: err});
+      error(req, res, "Error fetching recipe [" + key + "]", err);
       return;
     }
 
     if(doc === null) {
-      _notFound(req, res);
+      notFound(req, res, key);
       return;
     }
 
