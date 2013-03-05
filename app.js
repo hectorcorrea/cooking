@@ -9,7 +9,7 @@ var recipeRoutes = require('./routes/recipeRoutes');
 var siteRoutes = require('./routes/siteRoutes');
 
 // Set the path for the log files 
-var options = {filePath: __dirname };
+var options = {filePath: path.join(__dirname, 'logs') };
 logger.setup(options);
 
 // Configuration
