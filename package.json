@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "ejs": "0.8.x",
-    "express": "3.0.x"
+    "express": "3.0.x",
+    "log-hanging-fruit": "~0.4.0"
   }
 }

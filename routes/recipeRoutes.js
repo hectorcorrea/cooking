@@ -1,9 +1,9 @@
 var model = require('../models/recipeModel');
-var logger = require('../logger');
+var logger = require('log-hanging-fruit').defaultLogger;
 
 
 var notFound = function(req, res, key) {
-  logger.warn("recipeRoutes.notFound. Key [" + key + "]");
+  logger.warn('recipeRoutes.notFound. Key [' + key + ']');
   res.status(404).render('404.ejs', { status: 404, message: 'Recipe not found' });
 }
 
@@ -22,7 +22,7 @@ var save = function(req, res) {}
 
 var viewAll = function(req, res) {
 
-  logger.info("recipeRoutes.viewAll");
+  logger.info('recipeRoutes.viewAll');
   
   var m = model.recipes(req.app.settings.config.dbUrl);
   m.getAll(function(err, documents){
@@ -31,7 +31,7 @@ var viewAll = function(req, res) {
     var i, recipe, doc; 
 
     if(err) {
-      error(req, res, "Error fetching all recipes", err);
+      error(req, res, 'Error fetching all recipes', err);
       return;
     }
 
@@ -56,11 +56,11 @@ var viewOne = function(req, res) {
   var url = req.params.url;
   var m = model.recipes(req.app.settings.config.dbUrl);
 
-  console.log(key + ", " + url);
+  logger.info('recipeRoutes.viewOne (' + key + ', ' + url + ')');
   m.getOne(key, url, function(err, doc){
 
     if(err) {
-      error(req, res, "Error fetching recipe [" + key + "]", err);
+      error(req, res, 'Error fetching recipe [' + key + ']', err);
       return;
     }
 

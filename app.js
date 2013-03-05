@@ -3,16 +3,14 @@ var fs = require('fs');
 var path = require('path');
 var ejs = require('ejs');
 var http = require('http');
+var logger = require('log-hanging-fruit').defaultLogger;
 var settingsUtil = require('./settings');
 var recipeRoutes = require('./routes/recipeRoutes');
 var siteRoutes = require('./routes/siteRoutes');
-var logger = require('./logger');
 
-
-//use {flags: 'w'} to open in write mode, {flags: 'a'} to append
-//var logFile = fs.createWriteStream('./myLogFile.log', {flags: 'a'}); 
-logger.init(__dirname, 'INFO');
-
+// Set the path for the log files 
+var options = {filePath: __dirname };
+logger.setup(options);
 
 // Configuration
 var app = express();
@@ -91,5 +89,5 @@ var server = http.createServer(app);
 var port = app.get('port');
 server.listen(port, function() {
   var address = 'http://localhost:' + port;
-  console.log('Express listening at: ' + address);
+  logger.info('Express listening at: ' + address);
 });
