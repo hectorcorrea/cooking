@@ -14,7 +14,28 @@ var error = function(req, res, title, err) {
 }
 
 
-var editNew = function(req, res) {}
+var editNew = function(req, res) {
+  logger.info('recipeRoutes.editNew');
+  
+  var data = {
+    name: 'New recipe',
+    url: 'new-recipe', 
+    ingredients: 'enter ingredients',
+    directions: 'enter directions'
+  };
+
+  var m = model.recipes(req.app.settings.config.dbUrl);
+  m.addOne(data, function(err, newDoc) {
+
+    if(err) {
+      error(req, res, 'Error adding new recipe', err);
+      return;
+    }
+
+    res.redirect('/recipe/list');
+  });
+}
+
 var saveNew = function(req, res) {}
 var edit = function(req, res) {}
 var save = function(req, res) {}

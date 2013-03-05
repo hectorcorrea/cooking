@@ -25,9 +25,20 @@ var getOne = function(key, url, cb) {
 var addOne = function(data, cb) {
 
   var dbRecipes = db.recipes(dbUrl);
-  dbRecipes.addOne(data, function(err, savedDoc) {
-    cb(err, savedDoc);
+  dbRecipes.getNewId(function(err, id) {
+
+    if(err) {
+      cb(err);
+      return;
+    }
+    
+    data.key = id;
+    dbRecipes.addOne(data, function(err, savedDoc) {
+      cb(err, savedDoc);
+    });
+
   });
+
 
 }
 

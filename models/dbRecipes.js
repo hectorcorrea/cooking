@@ -3,6 +3,32 @@ var dbCollection = "recipes";
 var dbUrl = null; // e.g. "mongodb://localhost:27017/recipes";
 
 
+var getNewId = function(callback) {
+
+  MongoClient.connect(dbUrl, function(err, db) {
+
+    if(err) return callback(err);
+
+    var counters = db.collection('counters');
+    var query = {'name': 'recipeId'};
+    var order = [['_id','asc']];
+    var inc = {$inc:{'next':1}};
+    var options = {new: true, upsert: true};
+    counters.findAndModify(query, order, inc, options, function(err, doc) {
+      db.close()
+      if(err) {
+        callback(err);
+        return;
+      }      
+      var id = doc.next;
+      callback(null, id);
+    });
+
+  });
+
+
+}
+
 var fetchAll = function(callback) {
 
   MongoClient.connect(dbUrl, function(err, db) {
@@ -123,7 +149,8 @@ var publicApi = {
   fetchAll: fetchAll,
   fetchOne: fetchOne,
   addOne: addOne,
-  updateOne: updateOne
+  updateOne: updateOne,
+  getNewId: getNewId
 };
 
 
