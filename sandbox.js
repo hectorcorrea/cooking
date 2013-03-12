@@ -2,11 +2,14 @@ var http = require('http');
 var express = require('express');
 var app = express();
 var routes1 = require('./sandboxRoutes1');
+var routes2 = require('./sandboxRoutes2');
 
 // app.get('/db', function(req, res) {
 //   req.app.set("db", null);  
 //   res.send('try again');
 // });
+
+app.get('/x', routes2.getSome);
 
 app.get('*', routes1.getAll);
 
