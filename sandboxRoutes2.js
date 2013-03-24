@@ -1,7 +1,6 @@
-//var db = require('./sandboxDb')("mongodb://localhost:27017/recipes", 1);
 var db = require('./sandboxDb');
 
-var getAll = function(req,res) {
+var getSome = function(req,res) {
 
   db.setup("mongodb://localhost:27017/recipes");
   db.fetchAll(function(err, docs) {
@@ -16,4 +15,4 @@ var getAll = function(req,res) {
   });
 }
 
-module.exports.getAll = getAll;
+module.exports.getSome = getSome;
