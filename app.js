@@ -71,10 +71,9 @@ app.configure('production', function() {
 
 
 // Routes
-app.get('/recipe/new', recipeRoutes.editNew);
-app.post('/recipe/new', recipeRoutes.saveNew);
+app.post('/recipe/new', recipeRoutes.addNew);
 
-app.get('/recipe/edit/:url', recipeRoutes.edit);
+app.get('/recipe/:url/:key/edit', recipeRoutes.edit);
 app.post('/recipe/save/:key', recipeRoutes.save);
 
 app.get('/recipe/list', recipeRoutes.viewAll);

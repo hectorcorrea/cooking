@@ -1,61 +1,60 @@
 var db = require('./dbRecipes');
+var util = require('./recipeUtil');
 var dbUrl = null;
-
 
 var getAll = function(cb) {
 
-  var dbRecipes = db.recipes(dbUrl);
-  dbRecipes.fetchAll(function(err, documents) {
+  db.setup(dbUrl);
+  db.fetchAll(function(err, documents) {
     cb(err, documents);
   });
 
 }
 
 
-var getOne = function(key, url, cb) {
+var getOne = function(key, cb) {
 
-  var dbRecipes = db.recipes(dbUrl);
-  dbRecipes.fetchOne(key, url, function(err, document) {
+  db.setup(dbUrl);
+  db.fetchOne(key, function(err, document) {
     cb(err, document);
   });
 
 }
 
 
-var addOne = function(data, cb) {
+var addNew = function(cb) {
 
-  var dbRecipes = db.recipes(dbUrl);
-  dbRecipes.getNewId(function(err, id) {
+  db.setup(dbUrl);
+  db.getNewId(function(err, id) {
 
-    if(err) {
-      cb(err);
-      return;
-    }
+    if(err) return cb(err);
     
-    data.key = id;
-    dbRecipes.addOne(data, function(err, savedDoc) {
+    var data = {
+      key: id,
+      name: 'New recipe',
+      url: 'new-recipe', 
+      ingredients: 'enter ingredients',
+      directions: 'enter directions'
+    };
+
+    db.addOne(data, function(err, savedDoc) {
       cb(err, savedDoc);
     });
 
   });
-
 
 }
 
 
 var updateOne = function(data, cb) {
 
-  var dbRecipes = db.recipes(dbUrl);
-  dbRecipes.updateOne(data, function(err, savedCount) {
-    if (err) {
-      cb(err);
-    }
-    else if(savedCount === 1) {
-      cb(null);
-    }
-    else {
-      cb('Record not updated OK [' + savedCount + ']');
-    }
+  db.setup(dbUrl);
+  data.url = util.getUrlFromName(data.name);
+  console.log(data);
+
+  db.updateOne(data, function(err, savedDoc) {
+    if (err) return cb(err);
+    cb(null, savedDoc);
   });
 
 }
@@ -64,7 +63,7 @@ var updateOne = function(data, cb) {
 var publicApi = {
   getAll: getAll,
   getOne: getOne,
-  addOne: addOne,
+  addNew: addNew,
   updateOne: updateOne
 }
 

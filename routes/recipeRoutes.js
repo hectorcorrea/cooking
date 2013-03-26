@@ -14,31 +14,88 @@ var error = function(req, res, title, err) {
 }
 
 
-var editNew = function(req, res) {
-  logger.info('recipeRoutes.editNew');
+var addNew = function(req, res) {
   
-  var data = {
-    name: 'New recipe',
-    url: 'new-recipe', 
-    ingredients: 'enter ingredients',
-    directions: 'enter directions'
-  };
-
+  logger.info('recipeRoutes.addNew');
   var m = model.recipes(req.app.settings.config.dbUrl);
-  m.addOne(data, function(err, newDoc) {
+  m.addNew(function(err, newDoc) {
 
     if(err) {
       error(req, res, 'Error adding new recipe', err);
       return;
     }
 
-    res.redirect('/recipe/list');
+    var url = '/recipe/' + newDoc.url + '/' + newDoc.key + '/edit';
+    logger.info('redirecting to ' + url);
+    res.redirect(url);
   });
 }
 
-var saveNew = function(req, res) {}
-var edit = function(req, res) {}
-var save = function(req, res) {}
+
+
+var save = function(req, res) {
+  var key = parseInt(req.params.key);
+  logger.info('saving ' + key);
+
+  var data = {
+    key: key,
+    name: req.body.name,
+    ingredients: req.body.ingredients,
+    directions: req.body.directions
+  };
+
+  var m = model.recipes(req.app.settings.config.dbUrl);
+  m.updateOne(data, function(err, updatedDoc) {
+
+    if(err) {
+      console.log(err);
+      error(req, res, 'Error updating recipe', err);
+      return;
+    }
+
+    console.log('updated doc');
+    console.dir(updatedDoc);
+
+    var url = '/recipe/' + updatedDoc.url + '/' + updatedDoc.key;
+    logger.info('redirecting to ' + url);
+    res.redirect(url);
+  });
+
+}
+
+
+var edit = function(req, res) {
+  var key = parseInt(req.params.key)
+  var url = req.params.url;
+  var m = model.recipes(req.app.settings.config.dbUrl);
+
+  logger.info('recipeRoutes.editOne (' + key + ', ' + url + ')');
+  m.getOne(key, function(err, doc){
+
+    if(err) {
+      error(req, res, 'Error fetching recipe [' + key + ']', err);
+      return;
+    }
+
+    if(doc === null) {
+      notFound(req, res, key);
+      return;
+    }
+
+    var recipe = {
+      key: doc.key,
+      name: doc.name,
+      ingredients: doc.ingredients,
+      directions: doc.directions,
+      link: '/recipe/' + doc.url + '/' + doc.key,
+      postUrl: '/recipe/save/' + doc.key
+    }
+
+    res.render('recipeEdit.ejs', {recipe: recipe});
+
+  });
+
+}
 
 
 var viewAll = function(req, res) {
@@ -78,7 +135,7 @@ var viewOne = function(req, res) {
   var m = model.recipes(req.app.settings.config.dbUrl);
 
   logger.info('recipeRoutes.viewOne (' + key + ', ' + url + ')');
-  m.getOne(key, url, function(err, doc){
+  m.getOne(key, function(err, doc){
 
     if(err) {
       error(req, res, 'Error fetching recipe [' + key + ']', err);
@@ -93,6 +150,7 @@ var viewOne = function(req, res) {
     var recipe = {
       name: doc.name,
       link: '/recipe/' + doc.url + '/' + doc.key,
+      linkEdit: '/recipe/' + doc.url + '/' + doc.key + '/edit',
       ingredients: doc.ingredients,
       directions: doc.directions
     }
@@ -105,8 +163,7 @@ var viewOne = function(req, res) {
 
 
 module.exports = {
-  editNew: editNew, 
-  saveNew: saveNew, 
+  addNew: addNew, 
   edit: edit, 
   save: save, 
   viewAll: viewAll, 

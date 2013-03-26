@@ -1,11 +1,34 @@
 var MongoClient = require('mongodb').MongoClient;
 var dbCollection = "recipes";
-var dbUrl = null; // e.g. "mongodb://localhost:27017/recipes";
+var dbUrl = null; 
+var db = null;
+
+var _connect = function(callback) {
+
+  var isAlreadyConnected = (db != null);
+  if(isAlreadyConnected) {
+    return callback();
+  }
+
+  MongoClient.connect(dbUrl, function(err, dbConn) {
+    if(err) return callback(err);
+    db = dbConn;
+    callback(null);
+  });
+
+}
+
+
+var setup = function(dbConnString) {
+  if(dbUrl == null) {
+    dbUrl = dbConnString;
+  }
+}
 
 
 var getNewId = function(callback) {
 
-  MongoClient.connect(dbUrl, function(err, db) {
+  _connect(function(err) {
 
     if(err) return callback(err);
 
@@ -15,33 +38,31 @@ var getNewId = function(callback) {
     var inc = {$inc:{'next':1}};
     var options = {new: true, upsert: true};
     counters.findAndModify(query, order, inc, options, function(err, doc) {
-      db.close()
+
       if(err) {
         callback(err);
         return;
       }      
+
       var id = doc.next;
       callback(null, id);
     });
 
   });
 
-
 }
+
 
 var fetchAll = function(callback) {
 
-  MongoClient.connect(dbUrl, function(err, db) {
+  _connect(function(err) {
 
     if(err) return callback(err);
 
     var collection = db.collection(dbCollection);
     collection.find().toArray(function(err, items){
-
-      db.close()
       if(err) return callback(err);
       callback(null, items);
-
     });
 
   });
@@ -49,32 +70,32 @@ var fetchAll = function(callback) {
 }
 
 
-var fetchOne = function(key, url, callback) {
+var fetchOne = function(key, callback) {
 
-  MongoClient.connect(dbUrl, function(err, db) {
+  _connect(function(err) {
 
     if(err) return callback(err);
 
     var collection = db.collection(dbCollection);
-    var query = {key: key, url: url};
+    var query = {key: key};
     collection.find(query).toArray(function(err, items){
-
-      db.close();
       
       if(err) return callback(err);
-      
+
       if(items.length === 1) {
         // just what we want
         callback(null, items[0]);
+        return;
       }
-      else if(items.length > 1) {
+
+      if(items.length > 1) {
         // oops! how come we got more than one?
-        callback("Error: more than one record found for key [" + key + ", " + url + "]");
+        callback("Error: more than one record found for key [" + key + "]");
+        return;
       }
-      else {
-        // no record found
-        callback(null, null);
-      }
+
+      // no record found
+      callback(null, null);
 
     });
 
@@ -85,25 +106,26 @@ var fetchOne = function(key, url, callback) {
 
 var updateOne = function(data, callback) {
 
-  fetchOne(data.key, data.url, function(err, item) {
+  // TODO: we shouldn't need to figure out the "_id",
+  // this value should come with the data.
+  fetchOne(data.key, function(err, item) {
 
     if(err) return callback(err);
-    if(item === null) return callback("Item to update was not found for key [" + data.key + ", " + data.url + "]");
+    if(item === null) return callback("Item to update was not found for key [" + data.key + "]");
 
     // set the _id to match the one already on the database 
     data._id = item._id;
 
-    MongoClient.connect(dbUrl, function(err, db) {
+    var collection = db.collection(dbCollection);
+    collection.save(data, function(err, savedCount){
 
       if(err) return callback(err);
+      if(savedCount == 0) return callback("No document was updated");
+      if(savedCount > 1) return callback("More than one document was updated");
 
-      var collection = db.collection(dbCollection);
-      collection.save(data, function(err, savedCount){
-
-        db.close()
+      fetchOne(data.key, function(err, item) {
         if(err) return callback(err);
-        callback(null, savedCount);
-
+        callback(null, item);
       });
 
     });
@@ -115,28 +137,16 @@ var updateOne = function(data, callback) {
 
 var addOne = function(data, callback) {
 
-  fetchOne(data.key, data.url, function(err, item) {
+  fetchOne(data.key, function(err, item) {
 
-    if(err) {
-      return callback(err);
-    }
+    if(err) return callback(err);
+    if(item !== null) return callback("An item with the same key already exists [" + data.key + "]");
 
-    if(item !== null) {
-      return callback("An item with the same key already exists [" + data.key + "," + data.url + "]");
-    }
-
-    MongoClient.connect(dbUrl, function(err, db) {
+    var collection = db.collection(dbCollection);
+    collection.save(data, function(err, savedCount){
 
       if(err) return callback(err);
-
-      var collection = db.collection(dbCollection);
-      collection.save(data, function(err, savedCount){
-
-        db.close()
-        if(err) return callback(err);
-        callback(null, savedCount);
-
-      });
+      callback(null, savedCount);
 
     });
 
@@ -145,17 +155,12 @@ var addOne = function(data, callback) {
 }
 
 
-var publicApi = {
+module.exports = {
+  setup: setup,
   fetchAll: fetchAll,
   fetchOne: fetchOne,
   addOne: addOne,
   updateOne: updateOne,
   getNewId: getNewId
 };
-
-
-module.exports.recipes = function(dbConnString) {
-  dbUrl = dbConnString;
-  return publicApi;
-}
 
