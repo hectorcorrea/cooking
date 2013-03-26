@@ -2,6 +2,14 @@ var model = require('../models/recipeModel');
 var logger = require('log-hanging-fruit').defaultLogger;
 
 
+var htmlLineFeeds = function(text) {
+  text = text.replace(/\r\n/g, '<br/>');
+  text = text.replace(/\r/g,'<br/>');
+  text = text.replace(/\n/g,'<br/>');
+  return text;
+}
+
+
 var notFound = function(req, res, key) {
   logger.warn('recipeRoutes.notFound. Key [' + key + ']');
   res.status(404).render('404.ejs', { status: 404, message: 'Recipe not found' });
@@ -53,8 +61,8 @@ var save = function(req, res) {
       return;
     }
 
-    console.log('updated doc');
-    console.dir(updatedDoc);
+    // console.log('updated doc');
+    // console.dir(updatedDoc);
 
     var url = '/recipe/' + updatedDoc.url + '/' + updatedDoc.key;
     logger.info('redirecting to ' + url);
@@ -151,10 +159,11 @@ var viewOne = function(req, res) {
       name: doc.name,
       link: '/recipe/' + doc.url + '/' + doc.key,
       linkEdit: '/recipe/' + doc.url + '/' + doc.key + '/edit',
-      ingredients: doc.ingredients,
-      directions: doc.directions
+      ingredients: htmlLineFeeds(doc.ingredients),
+      directions: htmlLineFeeds(doc.directions)
     }
 
+    //console.dir(recipe);
     res.render('recipeOne.ejs', {recipe: recipe});
 
   });

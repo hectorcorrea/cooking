@@ -4,13 +4,14 @@
   "scripts": {
     "start": "app.js"
   },
-  "version": "0.0.0",
+  "version": "0.0.0-1",
   "engines": {
     "node": "0.8.x"
   },
   "dependencies": {
     "ejs": "0.8.x",
     "express": "3.0.x",
-    "log-hanging-fruit": "~0.4.0"
+    "log-hanging-fruit": "~0.4.0",
+    "mongodb": "1.2.x"
   }
 }
