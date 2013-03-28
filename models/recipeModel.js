@@ -5,6 +5,9 @@ var dbUrl = null;
 
 
 var encodeText = function(encoder, text) {
+  if (text === undefined) {
+    return '';
+  }
   text = encoder.htmlEncode(text);
   text = text.replace(/&#13;&#10;/g, '<br/>');
   text = text.replace(/&#13;/g,'<br/>');
@@ -14,6 +17,9 @@ var encodeText = function(encoder, text) {
 
 
 var decodeText = function(encoder, text) {
+  if (text === undefined) {
+    return '';
+  }  
   text = encoder.htmlDecode(text);
   text = text.replace(/<br\/>/g, '\r\n')
   return text;
@@ -26,6 +32,7 @@ var prepareForSave = function(data) {
   data.name = encodeText(encoder, data.name);
   data.ingredients = encodeText(encoder, data.ingredients);
   data.directions = encodeText(encoder, data.directions);
+  data.notes = encodeText(encoder, data.notes);
   
   // calculate a few fields
   data.url = util.getUrlFromName(data.name);
@@ -38,6 +45,7 @@ var decodeForEdit = function(data) {
   var encoder = new Encoder('entity');
   data.ingredients = decodeText(encoder, data.ingredients);
   data.directions = decodeText(encoder, data.directions);
+  data.notes = decodeText(encoder, data.notes);
   return data;
 };
 
@@ -58,6 +66,7 @@ var getOne = function(key, decode, cb) {
   db.fetchOne(key, function(err, document) {
     if(decode) 
       document = decodeForEdit(document);
+    // console.log(document);
     cb(err, document);
   });
 
@@ -75,7 +84,8 @@ var addNew = function(cb) {
       key: id,
       name: 'New recipe',
       ingredients: '',
-      directions: ''
+      directions: '',
+      notes: ''
     };
     data = prepareForSave(data);
 
@@ -92,8 +102,6 @@ var updateOne = function(data, cb) {
 
   db.setup(dbUrl);
   data = prepareForSave(data);
-  console.log(data);
-
   db.updateOne(data, function(err, savedDoc) {
     if (err) return cb(err);
     cb(null, savedDoc);

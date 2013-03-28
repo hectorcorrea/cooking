@@ -13,10 +13,7 @@ var _connect = function(callback) {
   MongoClient.connect(dbUrl, function(err, dbConn) {
     if(err) return callback(err);
     db = dbConn;
-    db.collection(dbCollection).ensureIndex({sortName:1}, function(a,b) {
-      console.dir(a);
-      console.dir(b);
-    });
+    db.collection(dbCollection).ensureIndex({sortName:1}, function(err,ix) {});
     callback(null);
   });
 
@@ -64,7 +61,9 @@ var fetchAll = function(callback) {
     if(err) return callback(err);
 
     var collection = db.collection(dbCollection);
-    collection.find().toArray(function(err, items){
+    var fields = {key: 1, name: 1, url: 1};
+    var cursor = collection.find({}, fields).sort({sortName:1});
+    cursor.toArray(function(err, items){
       if(err) return callback(err);
       callback(null, items);
     });

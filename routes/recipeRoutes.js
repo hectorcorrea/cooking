@@ -2,14 +2,6 @@ var model = require('../models/recipeModel');
 var logger = require('log-hanging-fruit').defaultLogger;
 
 
-var htmlLineFeeds = function(text) {
-  text = text.replace(/\r\n/g, '<br/>');
-  text = text.replace(/\r/g,'<br/>');
-  text = text.replace(/\n/g,'<br/>');
-  return text;
-}
-
-
 var notFound = function(req, res, key) {
   logger.warn('recipeRoutes.notFound. Key [' + key + ']');
   res.status(404).render('404.ejs', { status: 404, message: 'Recipe not found' });
@@ -56,13 +48,9 @@ var save = function(req, res) {
   m.updateOne(data, function(err, updatedDoc) {
 
     if(err) {
-      console.log(err);
       error(req, res, 'Error updating recipe', err);
       return;
     }
-
-    // console.log('updated doc');
-    // console.dir(updatedDoc);
 
     var url = '/recipe/' + updatedDoc.url + '/' + updatedDoc.key;
     logger.info('redirecting to ' + url);
@@ -95,6 +83,7 @@ var edit = function(req, res) {
       name: doc.name,
       ingredients: doc.ingredients,
       directions: doc.directions,
+      notes: doc.notes,
       link: '/recipe/' + doc.url + '/' + doc.key,
       postUrl: '/recipe/save/' + doc.key
     }
@@ -159,11 +148,11 @@ var viewOne = function(req, res) {
       name: doc.name,
       link: '/recipe/' + doc.url + '/' + doc.key,
       linkEdit: '/recipe/' + doc.url + '/' + doc.key + '/edit',
-      ingredients: htmlLineFeeds(doc.ingredients),
-      directions: htmlLineFeeds(doc.directions)
+      ingredients: doc.ingredients,
+      directions: doc.directions,
+      notes: doc.notes
     }
 
-    //console.dir(recipe);
     res.render('recipeOne.ejs', {recipe: recipe});
 
   });

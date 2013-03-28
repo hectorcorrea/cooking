@@ -7,6 +7,10 @@
     <p><%- recipe.ingredients %></p>
     <h2>Directions</h2>
     <p><%- recipe.directions %></p>
+    <% if(recipe.notes) { %>
+      <h2>Notes</h2>
+      <p><%- recipe.notes %></p>
+    <% } %>
   </div>
 
   <div class="four columns">
