@@ -41,7 +41,8 @@ var save = function(req, res) {
     key: key,
     name: req.body.name,
     ingredients: req.body.ingredients,
-    directions: req.body.directions
+    directions: req.body.directions,
+    notes: req.body.notes
   };
 
   var m = model.recipes(req.app.settings.config.dbUrl);
