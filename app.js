@@ -80,6 +80,8 @@ app.get('/recipe/list', recipeRoutes.viewAll);
 app.get('/recipe', recipeRoutes.viewAll);
 app.get('/recipe/:url/:key', recipeRoutes.viewOne);
 
+app.get('/', recipeRoutes.viewAll);
+
 app.get('*', siteRoutes.notFound);
 
 
