@@ -78,7 +78,7 @@ var edit = function(req, res) {
   var m = model.recipes(req.app.settings.config.dbUrl);
 
   logger.info('recipeRoutes.editOne (' + key + ', ' + url + ')');
-  m.getOne(key, function(err, doc){
+  m.getOne(key, true, function(err, doc){
 
     if(err) {
       error(req, res, 'Error fetching recipe [' + key + ']', err);
@@ -143,7 +143,7 @@ var viewOne = function(req, res) {
   var m = model.recipes(req.app.settings.config.dbUrl);
 
   logger.info('recipeRoutes.viewOne (' + key + ', ' + url + ')');
-  m.getOne(key, function(err, doc){
+  m.getOne(key, false, function(err, doc){
 
     if(err) {
       error(req, res, 'Error fetching recipe [' + key + ']', err);

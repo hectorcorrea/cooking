@@ -1,16 +1,40 @@
-var http = require('http');
-var express = require('express');
-var app = express();
-var routes1 = require('./sandboxRoutes1');
-var routes2 = require('./sandboxRoutes2');
+var MongoClient = require('mongodb').MongoClient;
+var dbCollection = "recipes";
+var dbUrl = "mongodb://localhost:27017/recipes";
 
-app.get('/x', routes2.getSome);
-app.get('*', routes1.getAll);
+MongoClient.connect(dbUrl, function(err, db) {
 
-// Fire it up! 
-var server = http.createServer(app);
-var port = 3000;
-server.listen(port, function() {
-  var address = 'http://localhost:' + port;
-  console.log('Express listening at: ' + address);
+  if(err) {
+    console.log("Error connecting");
+    console.dir(err);
+    return;
+  }
+
+  // var collection = db.collection(dbCollection);
+  // collection.find().sort({sortName:1}).toArray(function(err, items){
+
+  //   if(err) {
+  //     console.log("Error finding");
+  //     console.dir(err);
+  //     return;
+  //   }
+
+  //   console.log(items);
+
+  // });
+
+  var collection = db.collection(dbCollection);
+  var cursor = collection.find().sort({sortName:1});
+  cursor.toArray(function(err, items){
+
+    if(err) {
+      console.log("Error finding");
+      console.dir(err);
+      return;
+    }
+
+    console.log(items);
+
+  });
+  
 });

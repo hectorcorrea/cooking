@@ -13,6 +13,10 @@ var _connect = function(callback) {
   MongoClient.connect(dbUrl, function(err, dbConn) {
     if(err) return callback(err);
     db = dbConn;
+    db.collection(dbCollection).ensureIndex({sortName:1}, function(a,b) {
+      console.dir(a);
+      console.dir(b);
+    });
     callback(null);
   });
 
