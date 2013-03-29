@@ -55,33 +55,31 @@ var getNewId = function(callback) {
 
 
 var fetchAll = function(callback) {
-
-  _connect(function(err) {
-
-    if(err) return callback(err);
-
-    var collection = db.collection(dbCollection);
-    var fields = {key: 1, name: 1, url: 1, isStarred: 1};
-    var cursor = collection.find({}, fields).sort({sortName:1});
-    cursor.toArray(function(err, items){
-      if(err) return callback(err);
-      callback(null, items);
-    });
-
-  });
-
+  var query = {};
+  _fetchList(query, callback);
 };
 
 
 var fetchFavorites = function(callback) {
+  var query = {isStarred: true};
+  _fetchList(query, callback);
+};
+
+
+var fetchShopping = function(callback) {
+  var query = {isShoppingList: true};
+  _fetchList(query, callback);
+};
+
+
+var _fetchList = function(query, callback) {
 
   _connect(function(err) {
 
     if(err) return callback(err);
 
     var collection = db.collection(dbCollection);
-    var query = {isStarred: true};
-    var fields = {key: 1, name: 1, url: 1, isStarred: 1};
+    var fields = {key: 1, name: 1, url: 1, isStarred: 1, isShoppingList: 1};
     var cursor = collection.find(query, fields).sort({sortName:1});
     cursor.toArray(function(err, items){
       if(err) return callback(err);
@@ -179,6 +177,37 @@ var starOne = function(key, starred, callback) {
 };
 
 
+var addToShoppingList = function(key, callback) {
+  _updateShoppingList(key, true, callback);
+}
+
+
+var removeFromShoppingList = function(key, callback) {
+  _updateShoppingList(key, false, callback);
+}
+
+
+var _updateShoppingList = function(key, isAddToList, callback) {
+
+  _connect(function(err) {
+
+    if(err) return callback(err);
+
+    var query = {key: key};
+    var field = {'$set': {'isShoppingList': isAddToList}};
+    var collection = db.collection(dbCollection);
+    collection.update(query, field, function(err, count) {
+      if(err) return callback(err);
+      if(count === 0) return callback("No records were marked for ShoppingList");
+      if(count > 1) return callback("More than one record was for ShoppingList");
+      callback(null);
+    });
+
+  });
+
+};
+
+
 var addOne = function(data, callback) {
 
   fetchOne(data.key, function(err, item) {
@@ -203,10 +232,13 @@ module.exports = {
   setup: setup,
   fetchAll: fetchAll,
   fetchFavorites: fetchFavorites,
+  fetchShopping: fetchShopping,
   fetchOne: fetchOne,
   addOne: addOne,
   updateOne: updateOne,
   getNewId: getNewId,
-  starOne: starOne
+  starOne: starOne,
+  addToShoppingList: addToShoppingList,
+  removeFromShoppingList: removeFromShoppingList
 };
 

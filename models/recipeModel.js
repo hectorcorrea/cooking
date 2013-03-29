@@ -39,6 +39,7 @@ var prepareForSave = function(data) {
   data.sortName = data.name.toLowerCase();
 
   data.isStarred = data.isStarred === true;
+  data.isShoppingList = data.isShoppingList === true;
   return data;
 };
 
@@ -53,22 +54,26 @@ var decodeForEdit = function(data) {
 
 
 var getAll = function(cb) {
-
   db.setup(dbUrl);
   db.fetchAll(function(err, documents) {
     cb(err, documents);
   });
-
 };
 
 
 var getFavorites = function(cb) {
-
   db.setup(dbUrl);
   db.fetchFavorites(function(err, documents) {
     cb(err, documents);
   });
+};
 
+
+var getShopping = function(cb) {
+  db.setup(dbUrl);
+  db.fetchShopping(function(err, documents) {
+    cb(err, documents);
+  });
 };
 
 
@@ -125,21 +130,42 @@ var updateOne = function(data, cb) {
 var starOne = function(key, starred, cb) {
 
   db.setup(dbUrl);
-  db.starOne(key, starred, function(err, savedDoc) {
+  db.starOne(key, starred, function(err) {
     if (err) return cb(err);
-    cb(null, savedDoc);
+    cb(null);
   });
 
+};
+
+
+var addToShoppingList = function(key, cb) {
+  db.setup(dbUrl);
+  db.addToShoppingList(key, function(err) {
+    if (err) return cb(err);
+    cb(null);
+  });
+};
+
+
+var removeFromShoppingList = function(key, cb) {
+  db.setup(dbUrl);
+  db.removeFromShoppingList(key, function(err) {
+    if (err) return cb(err);
+    cb(null);
+  });
 };
 
 
 var publicApi = {
   getAll: getAll,
   getFavorites: getFavorites,
+  getShopping: getShopping,
   getOne: getOne,
   addNew: addNew,
   updateOne: updateOne,
-  starOne: starOne
+  starOne: starOne,
+  addToShoppingList: addToShoppingList,
+  removeFromShoppingList: removeFromShoppingList
 };
 
 

@@ -96,64 +96,55 @@ var edit = function(req, res) {
 
 
 var viewAll = function(req, res) {
-
   logger.info('recipeRoutes.viewAll');
-  
   var m = model.recipes(req.app.settings.config.dbUrl);
   m.getAll(function(err, documents){
-
-    var recipes = [];
-    var i, recipe, doc; 
-
-    if(err) {
-      error(req, res, 'Error fetching all recipes', err);
-      return;
-    }
-
-    for(i=0; i<documents.length; i++) {
-      doc = documents[i];
-      recipe = {
-        name: doc.name,
-        link: '/recipe/' + doc.url + '/' + doc.key,
-        isStarred: doc.isStarred
-      }
-      recipes.push(recipe);
-    }
-
-    res.render('recipeAll.ejs', {recipes: recipes});
-
+    _renderList(req, res, err, documents, "My Recipes");
   });
 };
 
 
 var viewFavorites = function(req, res) {
-
   logger.info('recipeRoutes.viewFavorites');
-  
   var m = model.recipes(req.app.settings.config.dbUrl);
   m.getFavorites(function(err, documents){
-
-    var recipes = [];
-    var i, recipe, doc; 
-
-    if(err) {
-      error(req, res, 'Error fetching favorite recipes', err);
-      return;
-    }
-
-    for(i=0; i<documents.length; i++) {
-      doc = documents[i];
-      recipe = {
-        name: doc.name,
-        link: '/recipe/' + doc.url + '/' + doc.key,
-        isStarred: doc.isStarred
-      }
-      recipes.push(recipe);
-    }
-
-    res.render('recipeAll.ejs', {title: "My Favorites", recipes: recipes});
-
+    _renderList(req, res, err, documents, "My Favorites");
   });
+};
+
+
+var viewShopping = function(req, res) {
+  logger.info('recipeRoutes.viewShopping');
+  var m = model.recipes(req.app.settings.config.dbUrl);
+  m.getShopping(function(err, documents){
+    _renderList(req, res, err, documents, "My Shopping List");
+  });
+};
+
+
+var _renderList = function(req, res, err, documents, title) {
+
+  var recipes = [];
+  var i, recipe, doc; 
+
+  if(err) {
+    error(req, res, 'Error fetching [' + title + '] recipes', err);
+    return;
+  }
+
+  for(i=0; i<documents.length; i++) {
+    doc = documents[i];
+    recipe = {
+      name: doc.name,
+      link: '/recipe/' + doc.url + '/' + doc.key,
+      isStarred: doc.isStarred,
+      isShoppingList: doc.isShoppingList
+    }
+    recipes.push(recipe);
+  }
+
+  res.render('recipeAll.ejs', {title: title, recipes: recipes});
+
 };
 
 
@@ -183,6 +174,36 @@ var _starOne = function(req, res, star) {
   });
 }
 
+
+var shop = function(req, res) {
+  logger.info('recipeRoutes.shop');
+  var key = parseInt(req.params.key)
+  var m = model.recipes(req.app.settings.config.dbUrl);
+  m.addToShoppingList(key, function(err) {
+    if(err) {
+      res.send({error: 'Could not update recipe'});
+      return;
+    }
+    res.send({shop: true});
+  });
+};
+
+
+var noShop = function(req, res) {
+  logger.info('recipeRoutes.noShop');
+  var key = parseInt(req.params.key)
+  var m = model.recipes(req.app.settings.config.dbUrl);
+  m.removeFromShoppingList(key, function(err) {
+    if(err) {
+      res.send({error: 'Could not update recipe'});
+      return;
+    }
+    res.send({shop: false});
+  });
+};
+
+
+
 var viewOne = function(req, res) {
 
   var key = parseInt(req.params.key)
@@ -209,7 +230,8 @@ var viewOne = function(req, res) {
       ingredients: doc.ingredients,
       directions: doc.directions,
       notes: doc.notes,
-      isStarred: doc.isStarred
+      isStarred: doc.isStarred,
+      isShoppingList: doc.isShoppingList
     }
 
     res.render('recipeOne.ejs', {recipe: recipe});
@@ -226,6 +248,9 @@ module.exports = {
   viewAll: viewAll, 
   viewOne: viewOne,
   viewFavorites: viewFavorites, 
+  viewShopping: viewShopping, 
   star: star,
-  unstar: unstar
+  unstar: unstar,
+  shop: shop,
+  noShop: noShop,
 }

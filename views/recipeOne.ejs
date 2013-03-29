@@ -9,10 +9,12 @@
   <div class="twelve columns">
     <h1><%= recipe.name %></h1>
     <h2>Ingredients</h2>
-    <p>
+    <div>
       <a id="star" class="hidden" href="#">(*)</a>
       <a id="unstar" class="hidden" href="#">(0)</a>
-    </p>
+      <a id="shop" class="hidden" href="#">($)</a>
+      <a id="noshop" class="hidden" href="#">(-)</a>
+    <div>
     <p><%- recipe.ingredients %></p>
     <h2>Directions</h2>
     <p><%- recipe.directions %></p>
@@ -41,6 +43,7 @@
 
 $(function() {
 
+    // Star/unstar buttons
     var showStar = function() {
       $('#star').show();
       $('#unstar').hide();
@@ -83,6 +86,51 @@ $(function() {
       showStar(); 
     <% } else { %>
       hideStar();
+    <% } %> 
+
+    // Shopping list buttons
+    var showShopping = function() {
+      $('#shop').show();
+      $('#noshop').hide();
+    };
+
+    var hideShopping = function() {
+      $('#shop').hide();
+      $('#noshop').show();
+    };
+
+    var shopRecipe = function() {
+      var url = '<%= recipe.link %>/shop';
+      $.get(url, function(data) {
+        if(data.shop === true) {
+          showShopping();
+        }
+      });
+    };
+
+    var noShopRecipe = function() {
+      var url = '<%= recipe.link %>/noshop';
+      $.get(url, function(data) {
+        if(data.shop === false) {
+          hideShopping();
+        }
+      });
+    };
+
+    $('#shop').click(function() {
+      noShopRecipe();
+      return false;      
+    });
+
+    $('#noshop').click(function() {
+      shopRecipe();
+      return false;      
+    });
+
+    <% if(recipe.isShoppingList === true) { %> 
+      showShopping(); 
+    <% } else { %>
+      hideShopping();
     <% } %> 
 
 });

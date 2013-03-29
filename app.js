@@ -79,7 +79,11 @@ app.post('/recipe/save/:key', recipeRoutes.save);
 app.get('/recipe/:url/:key/star', recipeRoutes.star);
 app.get('/recipe/:url/:key/unstar', recipeRoutes.unstar);
 
+app.get('/recipe/:url/:key/shop', recipeRoutes.shop);
+app.get('/recipe/:url/:key/noshop', recipeRoutes.noShop);
+
 app.get('/recipe/favorites', recipeRoutes.viewFavorites);
+app.get('/recipe/shopping', recipeRoutes.viewShopping);
 app.get('/recipe/list', recipeRoutes.viewAll);
 app.get('/recipe', recipeRoutes.viewAll);
 app.get('/recipe/:url/:key', recipeRoutes.viewOne);
