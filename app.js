@@ -76,6 +76,9 @@ app.post('/recipe/new', recipeRoutes.addNew);
 app.get('/recipe/:url/:key/edit', recipeRoutes.edit);
 app.post('/recipe/save/:key', recipeRoutes.save);
 
+app.get('/recipe/:url/:key/star', recipeRoutes.star);
+app.get('/recipe/:url/:key/unstar', recipeRoutes.unstar);
+
 app.get('/recipe/list', recipeRoutes.viewAll);
 app.get('/recipe', recipeRoutes.viewAll);
 app.get('/recipe/:url/:key', recipeRoutes.viewOne);

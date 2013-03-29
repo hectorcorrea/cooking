@@ -13,7 +13,14 @@
 
   <div class="row">
     <div class="four columns">
-      <p><a href="<%= recipe.link %>"><%= recipe.name %></a></p>
+      <p>
+        <% if(recipe.isStarred) { %> 
+          <span>(*)</span> 
+        <% } else { %>
+          <span>(o)</span>
+        <% } %> 
+        <a href="<%= recipe.link %>"><%= recipe.name %></a>
+      </p>
     </div>
   </div>
 

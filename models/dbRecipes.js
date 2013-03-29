@@ -17,14 +17,14 @@ var _connect = function(callback) {
     callback(null);
   });
 
-}
+};
 
 
 var setup = function(dbConnString) {
   if(dbUrl == null) {
     dbUrl = dbConnString;
   }
-}
+};
 
 
 var getNewId = function(callback) {
@@ -51,7 +51,7 @@ var getNewId = function(callback) {
 
   });
 
-}
+};
 
 
 var fetchAll = function(callback) {
@@ -61,7 +61,7 @@ var fetchAll = function(callback) {
     if(err) return callback(err);
 
     var collection = db.collection(dbCollection);
-    var fields = {key: 1, name: 1, url: 1};
+    var fields = {key: 1, name: 1, url: 1, isStarred: 1};
     var cursor = collection.find({}, fields).sort({sortName:1});
     cursor.toArray(function(err, items){
       if(err) return callback(err);
@@ -70,7 +70,7 @@ var fetchAll = function(callback) {
 
   });
 
-}
+};
 
 
 var fetchOne = function(key, callback) {
@@ -104,7 +104,7 @@ var fetchOne = function(key, callback) {
 
   });
 
-}
+};
 
 
 var updateOne = function(data, callback) {
@@ -135,7 +135,28 @@ var updateOne = function(data, callback) {
 
   });
   
-}
+};
+
+
+var starOne = function(key, starred, callback) {
+
+  _connect(function(err) {
+
+    if(err) return callback(err);
+
+    var query = {key: key};
+    var field = {'$set': {'isStarred': starred}};
+    var collection = db.collection(dbCollection);
+    collection.update(query, field, function(err, count) {
+      if(err) return callback(err);
+      if(count === 0) return callback("No records were starred");
+      if(count > 1) return callback("More than one record was starred");
+      callback(null);
+    });
+
+  });
+
+};
 
 
 var addOne = function(data, callback) {
@@ -155,7 +176,7 @@ var addOne = function(data, callback) {
 
   });
 
-}
+};
 
 
 module.exports = {
@@ -164,6 +185,7 @@ module.exports = {
   fetchOne: fetchOne,
   addOne: addOne,
   updateOne: updateOne,
-  getNewId: getNewId
+  getNewId: getNewId,
+  starOne: starOne
 };
 

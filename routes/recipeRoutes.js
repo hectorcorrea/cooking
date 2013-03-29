@@ -5,13 +5,13 @@ var logger = require('log-hanging-fruit').defaultLogger;
 var notFound = function(req, res, key) {
   logger.warn('recipeRoutes.notFound. Key [' + key + ']');
   res.status(404).render('404.ejs', { status: 404, message: 'Recipe not found' });
-}
+};
 
 
 var error = function(req, res, title, err) {
   logger.error(title, err);
   res.status(500).render('500.ejs', {message: err});
-}
+};
 
 
 var addNew = function(req, res) {
@@ -29,8 +29,7 @@ var addNew = function(req, res) {
     logger.info('redirecting to ' + url);
     res.redirect(url);
   });
-}
-
+};
 
 
 var save = function(req, res) {
@@ -58,7 +57,7 @@ var save = function(req, res) {
     res.redirect(url);
   });
 
-}
+};
 
 
 var edit = function(req, res) {
@@ -93,7 +92,7 @@ var edit = function(req, res) {
 
   });
 
-}
+};
 
 
 var viewAll = function(req, res) {
@@ -115,7 +114,8 @@ var viewAll = function(req, res) {
       doc = documents[i];
       recipe = {
         name: doc.name,
-        link: '/recipe/' + doc.url + '/' + doc.key
+        link: '/recipe/' + doc.url + '/' + doc.key,
+        isStarred: doc.isStarred
       }
       recipes.push(recipe);
     }
@@ -123,8 +123,34 @@ var viewAll = function(req, res) {
     res.render('recipeAll.ejs', {recipes: recipes});
 
   });
-}
+};
 
+
+var star = function(req, res) {
+  logger.info('recipeRoutes.star');
+  _starOne(req, res, true);
+};
+
+
+var unstar = function(req, res) {
+  logger.info('recipeRoutes.unstar');
+  _starOne(req, res, false);
+};
+
+
+var _starOne = function(req, res, star) {
+  var key = parseInt(req.params.key)
+  var url = req.params.url;
+  var m = model.recipes(req.app.settings.config.dbUrl);
+  m.starOne(key, star, function(err, x) {
+    if(err) {
+      logger.warn('Could not star/unstar. Key [' + key + ']. Error: ' + err);
+      res.send({error: 'Could not star/unstar key: ' + key});
+      return;
+    }
+    res.send({starred: star ? 1 : 0});
+  });
+}
 
 var viewOne = function(req, res) {
 
@@ -151,14 +177,15 @@ var viewOne = function(req, res) {
       linkEdit: '/recipe/' + doc.url + '/' + doc.key + '/edit',
       ingredients: doc.ingredients,
       directions: doc.directions,
-      notes: doc.notes
+      notes: doc.notes,
+      isStarred: doc.isStarred
     }
 
     res.render('recipeOne.ejs', {recipe: recipe});
 
   });
 
-}
+};
 
 
 module.exports = {
@@ -166,5 +193,7 @@ module.exports = {
   edit: edit, 
   save: save, 
   viewAll: viewAll, 
-  viewOne: viewOne
+  viewOne: viewOne,
+  star: star,
+  unstar: unstar
 }

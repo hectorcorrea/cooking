@@ -1,9 +1,18 @@
 <% include layoutTop %>
 
+<style>
+.hidden { display: none;}
+.shown { display: inline;}
+</style>
+
 <div class="row">
   <div class="twelve columns">
     <h1><%= recipe.name %></h1>
     <h2>Ingredients</h2>
+    <p>
+      <a id="star" class="hidden" href="#">(*)</a>
+      <a id="unstar" class="hidden" href="#">(0)</a>
+    </p>
     <p><%- recipe.ingredients %></p>
     <h2>Directions</h2>
     <p><%- recipe.directions %></p>
@@ -28,4 +37,56 @@
 
 <% include layoutBottom %>
 
+<script type="text/javascript">
+
+$(function() {
+
+    var showStar = function() {
+      $('#star').show();
+      $('#unstar').hide();
+    };
+
+    var hideStar = function() {
+      $('#star').hide();
+      $('#unstar').show();
+    };
+
+    var starRecipe = function() {
+      var url = '<%= recipe.link %>/star';
+      $.get(url, function(data) {
+        if(data.starred === 1) {
+          showStar();
+        }
+      });
+    };
+
+    var unstarRecipe = function() {
+      var url = '<%= recipe.link %>/unstar';
+      $.get(url, function(data) {
+        if(data.starred === 0) {
+          hideStar();
+        }
+      });
+    };
+
+    $('#star').click(function() {
+      unstarRecipe();
+      return false;      
+    });
+
+    $('#unstar').click(function() {
+      starRecipe();
+      return false;      
+    });
+
+    <% if(recipe.isStarred) { %> 
+      showStar(); 
+    <% } else { %>
+      hideStar();
+    <% } %> 
+
+});
+
+
+</script>
 

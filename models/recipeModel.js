@@ -37,6 +37,8 @@ var prepareForSave = function(data) {
   // calculate a few fields
   data.url = util.getUrlFromName(data.name);
   data.sortName = data.name.toLowerCase();
+
+  data.isStarred = data.isStarred === 1 ? 1 : 0;
   return data;
 };
 
@@ -110,11 +112,23 @@ var updateOne = function(data, cb) {
 };
 
 
+var starOne = function(key, starred, cb) {
+
+  db.setup(dbUrl);
+  db.starOne(key, starred, function(err, savedDoc) {
+    if (err) return cb(err);
+    cb(null, savedDoc);
+  });
+
+};
+
+
 var publicApi = {
   getAll: getAll,
   getOne: getOne,
   addNew: addNew,
-  updateOne: updateOne
+  updateOne: updateOne,
+  starOne: starOne
 };
 
 
