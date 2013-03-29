@@ -22,6 +22,13 @@
         <% } else { %>
           <span>(o)</span>
         <% } %> 
+
+        <% if(recipe.isShoppingList) { %> 
+          <span>($)</span> 
+        <% } else { %>
+          <span>(-)</span>
+        <% } %> 
+
         <a href="<%= recipe.link %>"><%= recipe.name %></a>
       </p>
     </div>
