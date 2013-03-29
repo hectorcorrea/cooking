@@ -126,6 +126,37 @@ var viewAll = function(req, res) {
 };
 
 
+var viewFavorites = function(req, res) {
+
+  logger.info('recipeRoutes.viewFavorites');
+  
+  var m = model.recipes(req.app.settings.config.dbUrl);
+  m.getFavorites(function(err, documents){
+
+    var recipes = [];
+    var i, recipe, doc; 
+
+    if(err) {
+      error(req, res, 'Error fetching favorite recipes', err);
+      return;
+    }
+
+    for(i=0; i<documents.length; i++) {
+      doc = documents[i];
+      recipe = {
+        name: doc.name,
+        link: '/recipe/' + doc.url + '/' + doc.key,
+        isStarred: doc.isStarred
+      }
+      recipes.push(recipe);
+    }
+
+    res.render('recipeAll.ejs', {title: "My Favorites", recipes: recipes});
+
+  });
+};
+
+
 var star = function(req, res) {
   logger.info('recipeRoutes.star');
   _starOne(req, res, true);
@@ -142,13 +173,13 @@ var _starOne = function(req, res, star) {
   var key = parseInt(req.params.key)
   var url = req.params.url;
   var m = model.recipes(req.app.settings.config.dbUrl);
-  m.starOne(key, star, function(err, x) {
+  m.starOne(key, star, function(err) {
     if(err) {
       logger.warn('Could not star/unstar. Key [' + key + ']. Error: ' + err);
       res.send({error: 'Could not star/unstar key: ' + key});
       return;
     }
-    res.send({starred: star ? 1 : 0});
+    res.send({starred: star});
   });
 }
 
@@ -194,6 +225,7 @@ module.exports = {
   save: save, 
   viewAll: viewAll, 
   viewOne: viewOne,
+  viewFavorites: viewFavorites, 
   star: star,
   unstar: unstar
 }

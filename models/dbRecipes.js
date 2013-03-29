@@ -73,6 +73,26 @@ var fetchAll = function(callback) {
 };
 
 
+var fetchFavorites = function(callback) {
+
+  _connect(function(err) {
+
+    if(err) return callback(err);
+
+    var collection = db.collection(dbCollection);
+    var query = {isStarred: true};
+    var fields = {key: 1, name: 1, url: 1, isStarred: 1};
+    var cursor = collection.find(query, fields).sort({sortName:1});
+    cursor.toArray(function(err, items){
+      if(err) return callback(err);
+      callback(null, items);
+    });
+
+  });
+
+};
+
+
 var fetchOne = function(key, callback) {
 
   _connect(function(err) {
@@ -182,6 +202,7 @@ var addOne = function(data, callback) {
 module.exports = {
   setup: setup,
   fetchAll: fetchAll,
+  fetchFavorites: fetchFavorites,
   fetchOne: fetchOne,
   addOne: addOne,
   updateOne: updateOne,

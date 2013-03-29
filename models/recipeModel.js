@@ -38,7 +38,7 @@ var prepareForSave = function(data) {
   data.url = util.getUrlFromName(data.name);
   data.sortName = data.name.toLowerCase();
 
-  data.isStarred = data.isStarred === 1 ? 1 : 0;
+  data.isStarred = data.isStarred === true;
   return data;
 };
 
@@ -56,6 +56,16 @@ var getAll = function(cb) {
 
   db.setup(dbUrl);
   db.fetchAll(function(err, documents) {
+    cb(err, documents);
+  });
+
+};
+
+
+var getFavorites = function(cb) {
+
+  db.setup(dbUrl);
+  db.fetchFavorites(function(err, documents) {
     cb(err, documents);
   });
 
@@ -125,6 +135,7 @@ var starOne = function(key, starred, cb) {
 
 var publicApi = {
   getAll: getAll,
+  getFavorites: getFavorites,
   getOne: getOne,
   addNew: addNew,
   updateOne: updateOne,

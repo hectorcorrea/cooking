@@ -54,7 +54,7 @@ $(function() {
     var starRecipe = function() {
       var url = '<%= recipe.link %>/star';
       $.get(url, function(data) {
-        if(data.starred === 1) {
+        if(data.starred === true) {
           showStar();
         }
       });
@@ -63,7 +63,7 @@ $(function() {
     var unstarRecipe = function() {
       var url = '<%= recipe.link %>/unstar';
       $.get(url, function(data) {
-        if(data.starred === 0) {
+        if(data.starred === false) {
           hideStar();
         }
       });
@@ -79,7 +79,7 @@ $(function() {
       return false;      
     });
 
-    <% if(recipe.isStarred) { %> 
+    <% if(recipe.isStarred === true) { %> 
       showStar(); 
     <% } else { %>
       hideStar();
