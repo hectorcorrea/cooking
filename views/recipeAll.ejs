@@ -2,12 +2,18 @@
 
 <div class="row">
 
-  <div class="eight columns">
+  <div class="twelve columns">
     <% if(!title) {
       var title = "All Recipes"; 
     } %>
-    <h3><%= title %></h3>
+
+    <form name="input", action="/recipe/new", method="post">
+      <h3><%= title %> <input type="submit" class="button" name = "save" value="New" />
+      </h3>
+    </form>
+
   </div>
+
 </div>
 
 <% for(r = 0; r < recipes.length; r++) { %>
@@ -15,7 +21,7 @@
   <% var recipe = recipes[r] %>
 
   <div class="row">
-    <div class="four columns">
+    <div class="eight columns">
       <p>
         <% if(recipe.isStarred) { %> 
           <span>(*)</span> 
@@ -35,14 +41,5 @@
   </div>
 
 <% } %>
-
-<div class="row">
-  <div class="eight columns">
-    <form name="input", action="/recipe/new", method="post">
-      <input type="submit" class="button" name = "save" value="New Recipe" />
-    </form>
-    </p>
-  </div>
-</div>
 
 <% include layoutBottom %>
