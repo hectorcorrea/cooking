@@ -21,7 +21,7 @@ app.configure(function() {
 
   app.set('view engine', 'ejs');
 
-  app.use(express.favicon());
+  //app.use(express.favicon());
 
   app.use(express.bodyParser());
   app.use(express.methodOverride());
