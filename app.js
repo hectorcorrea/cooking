@@ -88,6 +88,8 @@ app.get('/recipe/list', recipeRoutes.viewAll);
 app.get('/recipe', recipeRoutes.viewAll);
 app.get('/recipe/:url/:key', recipeRoutes.viewOne);
 
+app.get('/credits', siteRoutes.credits);
+
 app.get('/', recipeRoutes.viewAll);
 
 app.get('*', siteRoutes.notFound);
