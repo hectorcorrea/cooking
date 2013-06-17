@@ -7,6 +7,7 @@ var logger = require('log-hanging-fruit').defaultLogger;
 var settingsUtil = require('./settings');
 var recipeRoutes = require('./routes/recipeRoutes');
 var siteRoutes = require('./routes/siteRoutes');
+var logRoutes = require('./routes/logRoutes');
 
 // Set the path for the log files 
 var options = {filePath: path.join(__dirname, 'logs') };
@@ -87,6 +88,9 @@ app.get('/recipe/shopping', recipeRoutes.viewShopping);
 app.get('/recipe/list', recipeRoutes.viewAll);
 app.get('/recipe', recipeRoutes.viewAll);
 app.get('/recipe/:url/:key', recipeRoutes.viewOne);
+
+app.get('/log/current', logRoutes.current);
+app.get('/log/:date', logRoutes.byDate);
 
 app.get('/credits', siteRoutes.credits);
 
