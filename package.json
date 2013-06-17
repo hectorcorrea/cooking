@@ -1,6 +1,5 @@
 {
   "name": "cooking",
-  "subdomain": "cooking",
   "scripts": {
     "start": "app.js"
   },
