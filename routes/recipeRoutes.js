@@ -128,6 +128,7 @@ var _renderList = function(req, res, err, documents, title) {
   var i, recipe, doc; 
 
   if(err) {
+    console.log(err);
     error(req, res, 'Error fetching [' + title + '] recipes', err);
     return;
   }
