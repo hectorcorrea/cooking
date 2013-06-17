@@ -1,11 +1,9 @@
 {
   "name": "cooking",
-  "scripts": {
-    "start": "app.js"
-  },
-  "version": "0.0.0-7",
+  "main": "app.js",
+  "version": "0.0.1",
   "engines": {
-    "node": "0.8.x"
+    "node": "v0.8.x"
   },
   "dependencies": {
     "ejs": "0.8.x",
