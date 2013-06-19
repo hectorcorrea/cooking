@@ -108,7 +108,10 @@ var _fetchList = function(query, callback) {
     var fields = {key: 1, name: 1, url: 1, isStarred: 1, isShoppingList: 1};
     var cursor = collection.find(query, fields).sort({sortName:1});
     cursor.toArray(function(err, items){
-      if(err) return callback(err);
+      if(err) {
+        db = null;
+        return callback(err);
+      }
       callback(null, items);
     });
 
