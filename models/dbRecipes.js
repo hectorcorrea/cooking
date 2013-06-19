@@ -7,6 +7,7 @@ var _connect = function(callback) {
 
   var isAlreadyConnected = (db != null);
   if(isAlreadyConnected) {
+    console.log("Already connected");
     return callback();
   }
 
@@ -27,8 +28,13 @@ var _connect = function(callback) {
     mongos: {}
   };
 
+  console.log("Connecting...");
   MongoClient.connect(dbUrl, options, function(err, dbConn) {
-    if(err) return callback(err);
+    if(err) {
+      console.log("Could not connect");
+      return callback(err);
+    }
+    console.log("Connected!");
     db = dbConn;
     db.collection(dbCollection).ensureIndex({sortName:1}, function(err,ix) {});
     callback(null);
