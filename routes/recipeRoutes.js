@@ -9,7 +9,7 @@ var notFound = function(req, res, key) {
 
 
 var error = function(req, res, title, err) {
-  logger.error(title, err);
+  logger.error(title + ' ' + err);
   res.status(500).render('500.ejs', {message: err});
 };
 

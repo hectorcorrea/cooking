@@ -1,4 +1,5 @@
 var logger = require('log-hanging-fruit').defaultLogger;
+var logModel = require('../models/logModel');
 
 var zeroPad = function(number, zeroes) {
   return ('000000' + number).slice(-zeroes);
@@ -15,10 +16,20 @@ var currentLogFile = function() {
 var current = function(req, res) {
   var path = logger.setupOptions.filePath;
   var date = currentLogFile();
-  var html = "<h1>Current Log</h1>" + 
-    "log path: " + path + "<br/>" +
-    "date: " + date + "<br/>";
-  res.send(html);
+
+  logModel.getLog(path, date, function(err, text) {
+    var html = "<h1>Current Log</h1>" + 
+      "log path: " + path + "<br/>" +
+      "date: " + date + "<br/>";
+    if(err) {
+      html += "<h2>Error</h2>" + "<p>" + err + "</p>";
+    } 
+    else {
+      html += "<p>" + text + "</p>";
+    }
+    res.send(html);
+  });
+
 }
 
 var byDate = function(req, res) {
