@@ -18,6 +18,7 @@ var _connect = function(callback) {
   var options = {
     db: {},
     server: {
+      auto_reconnect: true,
       socketOptions: {connectTimeoutMS: 500}
     },
     replSet: {
@@ -92,7 +93,10 @@ var _fetchList = function(query, callback) {
 
   _connect(function(err) {
 
-    if(err) return callback(err);
+    if(err) {
+      db = null;
+      return callback(err);
+    }
 
     var collection = db.collection(dbCollection);
     var fields = {key: 1, name: 1, url: 1, isStarred: 1, isShoppingList: 1};
