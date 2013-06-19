@@ -23,7 +23,7 @@ var _connect = function(callback) {
       socketOptions: {connectTimeoutMS: 500}
     },
     replSet: {
-      socketOptions: {socketTimeoutMS: 200000}
+      socketOptions: {socketTimeoutMS: 2000}
     },
     mongos: {}
   };
