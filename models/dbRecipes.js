@@ -18,11 +18,11 @@ var _connect = function(callback) {
   var options = {
     db: {},
     server: {
-      socketOptions: {
-        connectTimeoutMS: 500
-      }
+      socketOptions: {connectTimeoutMS: 500}
     },
-    replSet: {},
+    replSet: {
+      socketOptions: {socketTimeoutMS: 200000}
+    },
     mongos: {}
   };
 
