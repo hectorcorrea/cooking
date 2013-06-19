@@ -10,7 +10,23 @@ var _connect = function(callback) {
     return callback();
   }
 
-  MongoClient.connect(dbUrl, function(err, dbConn) {
+  // Options to try to address the nasty disconnect
+  // issue with Azure & MongoLab 
+  //
+  // https://support.mongolab.com/entries/23009358-Handling-dropped-connections-on-Windows-Azure
+  // http://mongodb.github.io/node-mongodb-native/driver-articles/mongoclient.html
+  var options = {
+    db: {},
+    server: {
+      socketOptions: {
+        connectTimeoutMS: 500
+      }
+    },
+    replSet: {},
+    mongos: {}
+  };
+
+  MongoClient.connect(dbUrl, options, function(err, dbConn) {
     if(err) return callback(err);
     db = dbConn;
     db.collection(dbCollection).ensureIndex({sortName:1}, function(err,ix) {});
