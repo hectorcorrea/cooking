@@ -100,18 +100,22 @@ var _fetchList = function(query, callback) {
   _connect(function(err) {
 
     if(err) {
+      console.log("_fetchList - connect error");
       db = null;
       return callback(err);
     }
 
+    console.log("_fetchList - connected ok");
     var collection = db.collection(dbCollection);
     var fields = {key: 1, name: 1, url: 1, isStarred: 1, isShoppingList: 1};
     var cursor = collection.find(query, fields).sort({sortName:1});
     cursor.toArray(function(err, items){
       if(err) {
+        console.log("_fetchList - error reading");
         db = null;
         return callback(err);
       }
+      console.log("_fetchList - everything is OK");
       callback(null, items);
     });
 
