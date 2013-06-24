@@ -27,6 +27,7 @@ var _connect = function(callback) {
     },
     mongos: {}
   };
+  options = {};
 
   console.log("Connecting...");
   MongoClient.connect(dbUrl, options, function(err, dbConn) {
