@@ -20,10 +20,10 @@ var _connect = function(callback) {
     db: {},
     server: {
       auto_reconnect: true,
-      socketOptions: {keepAlive: 5000, connectTimeoutMS: 500}
+      socketOptions: {connectTimeoutMS: 500}
     },
     replSet: {
-      socketOptions: {keepAlive: 5000, socketTimeoutMS: 2000}
+      socketOptions: {socketTimeoutMS: 2000}
     },
     mongos: {}
   };
