@@ -16,6 +16,9 @@ var _connect = function(callback) {
   //
   // https://support.mongolab.com/entries/23009358-Handling-dropped-connections-on-Windows-Azure
   // http://mongodb.github.io/node-mongodb-native/driver-articles/mongoclient.html
+  //
+  // attempt 1 - never quite worked with old mongodb driver
+  // it gets hung with latest mongodb driver
   var options = {
     db: {},
     server: {
@@ -27,7 +30,14 @@ var _connect = function(callback) {
     },
     mongos: {}
   };
-  options = {};
+
+  // attempt 2 - going back to square one and the new driver
+  options = {
+    db: {},
+    server: {auto_reconnect: true},
+    replSet: {},
+    mongos: {}
+  };
 
   console.log("Connecting...");
   MongoClient.connect(dbUrl, options, function(err, dbConn) {
