@@ -10,6 +10,7 @@ var _connect = function(callback) {
 
     var admin = db.admin();
 
+    console.log("Already connected, about to ping")
     admin.ping(function(err) {
       if (err) {
         console.log("Already connected but then disconnected. Try again");
@@ -21,6 +22,7 @@ var _connect = function(callback) {
         callback();
       }
     }); 
+    console.log("Pinged");
 
     return;
   }
