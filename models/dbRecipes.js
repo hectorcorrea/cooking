@@ -51,12 +51,9 @@ var _connect = function(callback) {
   options = {
     db: {},
     server: {
-      auto_reconnect: true,
-      socketOptions: {connectTimeoutMS: 1500}
+      auto_reconnect: true
     },
-    replSet: {
-      socketOptions: {socketTimeoutMS: 2000}
-    },
+    replSet: {},
     mongos: {}
   };
 
