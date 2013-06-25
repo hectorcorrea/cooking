@@ -7,8 +7,21 @@ var _connect = function(callback) {
 
   var isAlreadyConnected = (db != null);
   if(isAlreadyConnected) {
-    console.log("Already connected");
-    return callback();
+
+    var admin = db.admin();
+
+    admin .ping(function(err) {
+      if (err) {
+        console.log("Already connected but then disconnected. Try again");
+        console.log(err);
+      }
+      else {
+        console.log("Already connected");
+        callback();
+      }
+    }); 
+
+    return;
   }
 
   // Options to try to address the nasty disconnect
@@ -34,8 +47,13 @@ var _connect = function(callback) {
   // attempt 2 - going back to square one and the new driver
   options = {
     db: {},
-    server: {auto_reconnect: true},
-    replSet: {},
+    server: {
+      auto_reconnect: true,
+      socketOptions: {connectTimeoutMS: 1500}
+    },
+    replSet: {
+      socketOptions: {socketTimeoutMS: 2000}
+    },
     mongos: {}
   };
 
