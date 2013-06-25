@@ -13,9 +13,10 @@ var _connect = function(callback) {
     console.log("Already connected, about to ping")
     admin.ping(function(err) {
       if (err) {
-        console.log("Already connected but then disconnected. Try again");
-        console.log(err);
-        callback(err);
+        console.log("Already connected but then disconnected. Retrying...");
+        db = null;
+        _connect(callback);
+        console.log("retried");
       }
       else {
         console.log("Already connected");
