@@ -10,10 +10,11 @@ var _connect = function(callback) {
 
     var admin = db.admin();
 
-    admin .ping(function(err) {
+    admin.ping(function(err) {
       if (err) {
         console.log("Already connected but then disconnected. Try again");
         console.log(err);
+        callback(err);
       }
       else {
         console.log("Already connected");
