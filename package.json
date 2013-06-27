@@ -1,10 +1,5 @@
 {
   "name": "cooking",
-  "subdomain": "cooking",
-  "scripts": {
-    "start": "app.js"
-  },
-  "version": "0.0.0-8",
   "main": "app.js",
   "version": "0.0.1",
   "engines": {
