@@ -9,33 +9,36 @@ var _connect = function(callback) {
   var isAlreadyConnected = (db != null);
   if(isAlreadyConnected) {
 
-    // This was just a desperate attempt to address 
-    // connection issues between Azure and MongoLab.
-    // I don't think it really does anything to address
-    // the issue and it will be removed soon. In the 
-    // meantime it's just turned off.
+    // Ping the server to make sure things are still OK.
     //
-    // var admin = db.admin();
+    // If the connection is dropped because it was idle
+    // the ping will restore it and the client won't 
+    // even notice we lost connectivity. 
     //
-    // logger.debug("Already connected, about to ping");
-    // admin.ping(function(err) {
-    //   if (err) {
-    //     logger.debug("Already connected but then disconnected. Retrying...");
-    //     db = null;
-    //     _connect(callback);
-    //     logger.debug("retried");
-    //   }
-    //   else {
-    //     logger.debug("Already connected");
-    //     callback();
-    //   }
-    // }); 
-    // logger.debug("Pinged");
-    logger.debug("Already connected");
-    callback();
-    return;
+    // This ping is wasteful when the connection is OK
+    // but I am willing to take the hit.
+    //
+    var admin = db.admin();
+    
+    logger.debug("Already connected, about to ping");
+    admin.ping(function(err) {
+      if (err) {
+        logger.debug("Already connected but then disconnected. Retrying...");
+        db = null;
+        _connect(callback);
+        logger.debug("retried");
+      }
+      else {
+        logger.debug("Already connected");
+        callback();
+      }
+    }); 
+
+    logger.debug("Pinged");
   }
 
+  // These options yield the best connectivity between 
+  // MongoLab and Azure. 
   var options = {
     db: {},
     server: {
@@ -46,6 +49,7 @@ var _connect = function(callback) {
     mongos: {}
   };
 
+  // Connect!
   logger.debug("Connecting...");
   MongoClient.connect(dbUrl, options, function(err, dbConn) {
     if(err) {
