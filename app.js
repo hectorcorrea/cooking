@@ -92,6 +92,7 @@ app.get('/recipe/:url/:key', recipeRoutes.viewOne);
 app.get('/log/current', logRoutes.current);
 app.get('/log/:date', logRoutes.byDate);
 
+app.get('/search', siteRoutes.search);
 app.get('/credits', siteRoutes.credits);
 
 app.get('/', recipeRoutes.viewAll);

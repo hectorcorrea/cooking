@@ -6,7 +6,12 @@ var credits = function(req, res) {
   res.render('credits.ejs');
 }
 
+var search = function(req, res) {
+  res.render('search.ejs');
+}
+
 module.exports = {
   notFound: notFound,
-  credits: credits
+  credits: credits,
+  search: search
 }
