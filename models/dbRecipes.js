@@ -35,6 +35,7 @@ var _connect = function(callback) {
     }); 
 
     logger.debug("Pinged");
+    return;
   }
 
   // These options yield the best connectivity between 
