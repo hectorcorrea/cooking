@@ -1,3 +1,4 @@
+var logger = require('log-hanging-fruit').defaultLogger;
 var MongoClient = require('mongodb').MongoClient;
 var dbCollection = "recipes";
 var dbUrl = null; 
@@ -8,48 +9,34 @@ var _connect = function(callback) {
   var isAlreadyConnected = (db != null);
   if(isAlreadyConnected) {
 
-    var admin = db.admin();
-
-    console.log("Already connected, about to ping")
-    admin.ping(function(err) {
-      if (err) {
-        console.log("Already connected but then disconnected. Retrying...");
-        db = null;
-        _connect(callback);
-        console.log("retried");
-      }
-      else {
-        console.log("Already connected");
-        callback();
-      }
-    }); 
-    console.log("Pinged");
-
+    // This was just a desperate attempt to address 
+    // connection issues between Azure and MongoLab.
+    // I don't think it really does anything to address
+    // the issue and it will be removed soon. In the 
+    // meantime it's just turned off.
+    //
+    // var admin = db.admin();
+    //
+    // logger.debug("Already connected, about to ping");
+    // admin.ping(function(err) {
+    //   if (err) {
+    //     logger.debug("Already connected but then disconnected. Retrying...");
+    //     db = null;
+    //     _connect(callback);
+    //     logger.debug("retried");
+    //   }
+    //   else {
+    //     logger.debug("Already connected");
+    //     callback();
+    //   }
+    // }); 
+    // logger.debug("Pinged");
+    logger.debug("Already connected");
+    callback();
     return;
   }
 
-  // Options to try to address the nasty disconnect
-  // issue with Azure & MongoLab 
-  //
-  // https://support.mongolab.com/entries/23009358-Handling-dropped-connections-on-Windows-Azure
-  // http://mongodb.github.io/node-mongodb-native/driver-articles/mongoclient.html
-  //
-  // attempt 1 - never quite worked with old mongodb driver
-  // it gets hung with latest mongodb driver
   var options = {
-    db: {},
-    server: {
-      auto_reconnect: true,
-      socketOptions: {connectTimeoutMS: 500}
-    },
-    replSet: {
-      socketOptions: {socketTimeoutMS: 2000}
-    },
-    mongos: {}
-  };
-
-  // attempt 2 - going back to square one and the new driver
-  options = {
     db: {},
     server: {
       auto_reconnect: true,
@@ -59,13 +46,13 @@ var _connect = function(callback) {
     mongos: {}
   };
 
-  console.log("Connecting...");
+  logger.debug("Connecting...");
   MongoClient.connect(dbUrl, options, function(err, dbConn) {
     if(err) {
-      console.log("Could not connect");
+      logger.error("Could not connect to DB");
       return callback(err);
     }
-    console.log("Connected!");
+    logger.debug("Connected!");
     db = dbConn;
     db.collection(dbCollection).ensureIndex({sortName:1}, function(err,ix) {});
     callback(null);
@@ -131,22 +118,22 @@ var _fetchList = function(query, callback) {
   _connect(function(err) {
 
     if(err) {
-      console.log("_fetchList - connect error");
+      logger.error("_fetchList - connect error");
       db = null;
       return callback(err);
     }
 
-    console.log("_fetchList - connected ok");
+    logger.debug("_fetchList - connected ok");
     var collection = db.collection(dbCollection);
     var fields = {key: 1, name: 1, url: 1, isStarred: 1, isShoppingList: 1};
     var cursor = collection.find(query, fields).sort({sortName:1});
     cursor.toArray(function(err, items){
       if(err) {
-        console.log("_fetchList - error reading");
+        logger.error("_fetchList - error reading");
         db = null;
         return callback(err);
       }
-      console.log("_fetchList - everything is OK");
+      logger.debug("_fetchList - everything is OK");
       callback(null, items);
     });
 
