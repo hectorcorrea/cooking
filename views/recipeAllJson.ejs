@@ -1,0 +1,29 @@
+<% include layoutTop %>
+
+<script src="/js/recipeController.js"></script>
+
+<div class="row">
+
+  <div class="twelve columns">
+    <form name="input", action="/recipe/new", method="post">
+      <h3>All Recipes
+        <input type="submit" class="button" name = "save" value="New" />
+      </h3>
+    </form>
+
+  </div>
+
+</div>
+
+<div class="row" ng-controller="recipeController">
+  {{xxx}}
+  <p ng-repeat="recipe in recipes">
+    {{recipe.name}}
+  </p>
+  <div class="eight columns">
+  </div>
+</div>
+
+
+
+<% include layoutBottom %>

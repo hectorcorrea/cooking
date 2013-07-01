@@ -6,6 +6,7 @@ var http = require('http');
 var logger = require('log-hanging-fruit').defaultLogger;
 var settingsUtil = require('./settings');
 var recipeRoutes = require('./routes/recipeRoutes');
+var recipeRoutes2 = require('./routes/recipeRoutes2');
 var siteRoutes = require('./routes/siteRoutes');
 var logRoutes = require('./routes/logRoutes');
 var dbSetup = require('./models/dbSetup');
@@ -92,6 +93,9 @@ app.get('/recipe/shopping', recipeRoutes.viewShopping);
 app.get('/recipe/list', recipeRoutes.viewAll);
 app.get('/recipe', recipeRoutes.viewAll);
 app.get('/recipe/:url/:key', recipeRoutes.viewOne);
+
+app.get('/recipe2/list', recipeRoutes2.viewAll);
+app.get('/recipe2/listdata', recipeRoutes2.viewAllData);
 
 app.get('/log/current', logRoutes.current);
 app.get('/log/:date', logRoutes.byDate);
