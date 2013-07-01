@@ -10,7 +10,6 @@
 
 var logger = require('log-hanging-fruit').defaultLogger;
 var MongoClient = require('mongodb').MongoClient;
-var dbCollection = null;
 var dbUrl = null; 
 var db = null;
 
@@ -106,10 +105,9 @@ var execute = function(callback) {
 };
 
 
-var setup = function(connString, collectionName) {
+var setup = function(connString) {
   if(dbUrl == null) {
     dbUrl = connString;
-    dbCollection = collectionName;
   }
 };
 

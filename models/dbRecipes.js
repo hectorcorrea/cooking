@@ -4,7 +4,7 @@ var mongoConnect = require("./mongoConnect");
 
 
 var setup = function(dbConnString) {
-  mongoConnect.setup(dbConnString, dbCollection);
+  mongoConnect.setup(dbConnString);
 };
 
 
