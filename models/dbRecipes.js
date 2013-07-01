@@ -1,81 +1,16 @@
 var logger = require('log-hanging-fruit').defaultLogger;
-var MongoClient = require('mongodb').MongoClient;
 var dbCollection = "recipes";
-var dbUrl = null; 
-var db = null;
-
-var _connect = function(callback) {
-
-  var isAlreadyConnected = (db != null);
-  if(isAlreadyConnected) {
-
-    // Ping the server to make sure things are still OK.
-    //
-    // If the connection is dropped because it was idle
-    // the ping will restore it and the client won't 
-    // even notice we lost connectivity. 
-    //
-    // This ping is wasteful when the connection is OK
-    // but I am willing to take the hit.
-    //
-    var admin = db.admin();
-    
-    logger.debug("Already connected, about to ping");
-    admin.ping(function(err) {
-      if (err) {
-        logger.debug("Already connected but then disconnected. Retrying...");
-        db = null;
-        _connect(callback);
-        logger.debug("retried");
-      }
-      else {
-        logger.debug("Already connected");
-        callback();
-      }
-    }); 
-
-    logger.debug("Pinged");
-    return;
-  }
-
-  // These options yield the best connectivity between 
-  // MongoLab and Azure. 
-  var options = {
-    db: {},
-    server: {
-      auto_reconnect: true,
-      socketOptions: {keepAlive: 1}
-    },
-    replSet: {},
-    mongos: {}
-  };
-
-  // Connect!
-  logger.debug("Connecting...");
-  MongoClient.connect(dbUrl, options, function(err, dbConn) {
-    if(err) {
-      logger.error("Could not connect to DB");
-      return callback(err);
-    }
-    logger.debug("Connected!");
-    db = dbConn;
-    db.collection(dbCollection).ensureIndex({sortName:1}, function(err,ix) {});
-    callback(null);
-  });
-
-};
+var mongoConnect = require("./mongoConnect");
 
 
 var setup = function(dbConnString) {
-  if(dbUrl == null) {
-    dbUrl = dbConnString;
-  }
+  mongoConnect.setup(dbConnString, dbCollection);
 };
 
 
 var getNewId = function(callback) {
 
-  _connect(function(err) {
+  mongoConnect.execute(function(err, db) {
 
     if(err) return callback(err);
 
@@ -120,7 +55,7 @@ var fetchShopping = function(callback) {
 
 var _fetchList = function(query, callback) {
 
-  _connect(function(err) {
+  mongoConnect.execute(function(err, db) {
 
     if(err) {
       logger.error("_fetchList - connect error");
@@ -149,7 +84,7 @@ var _fetchList = function(query, callback) {
 
 var fetchOne = function(key, callback) {
 
-  _connect(function(err) {
+  mongoConnect.execute(function(err, db) {
 
     if(err) return callback(err);
 
@@ -183,26 +118,28 @@ var fetchOne = function(key, callback) {
 
 var updateOne = function(data, callback) {
 
-  // TODO: we shouldn't need to figure out the "_id",
-  // this value should come with the data.
-  fetchOne(data.key, function(err, item) {
+  mongoConnect.execute(function(err, db) {
 
-    if(err) return callback(err);
-    if(item === null) return callback("Item to update was not found for key [" + data.key + "]");
-
-    // set the _id to match the one already on the database 
-    data._id = item._id;
-
-    var collection = db.collection(dbCollection);
-    collection.save(data, function(err, savedCount){
+    fetchOne(data.key, function(err, item) {
 
       if(err) return callback(err);
-      if(savedCount == 0) return callback("No document was updated");
-      if(savedCount > 1) return callback("More than one document was updated");
+      if(item === null) return callback("Item to update was not found for key [" + data.key + "]");
 
-      fetchOne(data.key, function(err, item) {
+      // set the _id to match the one already on the database 
+      data._id = item._id;
+
+      var collection = db.collection(dbCollection);
+      collection.save(data, function(err, savedCount){
+
         if(err) return callback(err);
-        callback(null, item);
+        if(savedCount == 0) return callback("No document was updated");
+        if(savedCount > 1) return callback("More than one document was updated");
+
+        fetchOne(data.key, function(err, item) {
+          if(err) return callback(err);
+          callback(null, item);
+        });
+
       });
 
     });
@@ -214,7 +151,7 @@ var updateOne = function(data, callback) {
 
 var starOne = function(key, starred, callback) {
 
-  _connect(function(err) {
+  mongoConnect.execute(function(err, db) {
 
     if(err) return callback(err);
 
@@ -245,7 +182,7 @@ var removeFromShoppingList = function(key, callback) {
 
 var _updateShoppingList = function(key, isAddToList, callback) {
 
-  _connect(function(err) {
+  mongoConnect.execute(function(err, db) {
 
     if(err) return callback(err);
 
@@ -266,16 +203,20 @@ var _updateShoppingList = function(key, isAddToList, callback) {
 
 var addOne = function(data, callback) {
 
-  fetchOne(data.key, function(err, item) {
+  mongoConnect.execute(function(err, db) {
 
-    if(err) return callback(err);
-    if(item !== null) return callback("An item with the same key already exists [" + data.key + "]");
-
-    var collection = db.collection(dbCollection);
-    collection.save(data, function(err, savedCount){
+    fetchOne(data.key, function(err, item) {
 
       if(err) return callback(err);
-      callback(null, savedCount);
+      if(item !== null) return callback("An item with the same key already exists [" + data.key + "]");
+
+      var collection = db.collection(dbCollection);
+      collection.save(data, function(err, savedCount){
+
+        if(err) return callback(err);
+        callback(null, savedCount);
+
+      });
 
     });
 
