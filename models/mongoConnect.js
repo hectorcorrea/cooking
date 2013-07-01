@@ -82,7 +82,7 @@ var _validateConnection = function(callback) {
     if (err) {
       logger.debug("...existing connection is broken.");
       db = null;
-      connect(callback);
+      _connectToDb(callback);
     }
     else {
       logger.debug("...existing connections is OK");
