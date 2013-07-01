@@ -8,6 +8,7 @@ var settingsUtil = require('./settings');
 var recipeRoutes = require('./routes/recipeRoutes');
 var siteRoutes = require('./routes/siteRoutes');
 var logRoutes = require('./routes/logRoutes');
+var dbSetup = require('./models/dbSetup');
 
 // Set the path for the log files 
 var options = {filePath: path.join(__dirname, 'logs') };
@@ -38,7 +39,7 @@ app.configure(function() {
 
   // Global error handler
   app.use( function(err, req, res, next) {
-    console.log("Global error handler. Error: " + err);
+    logger.error("Global error handler. Error: " + err);
     res.status(500);
     res.render('500', {message: err});
   });
@@ -50,7 +51,9 @@ app.configure(function() {
 app.configure('development', function() {
   app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
   var settingsFile = __dirname + "/settings.dev.json";
-  console.log('Loading settings from ' + settingsFile);
+  logger.info('Loading settings from ' + settingsFile);
+  var settings = settingsUtil.load(settingsFile);
+  dbSetup.init(settings.dbUrl);
   app.set("config", settingsUtil.load(settingsFile));
 }); 
 
@@ -59,13 +62,14 @@ app.configure('development', function() {
 app.configure('production', function() {
   app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
   var settingsFile = __dirname + "/settings.prod.json";
-  console.log('Loading settings from ' + settingsFile);
+  logger.info('Loading settings from ' + settingsFile);
   var settings = settingsUtil.load(settingsFile);
   if(process.env.DB_URL) {
     settings.dbUrl = process.env.DB_URL;
+    dbSetup.init(settings.dbUrl);
   }
   else {
-    console.log("This is not good. No DB_URL environment variable was found.");
+    logger.error("This is not good. No DB_URL environment variable was found.");
   }
   app.set("config", settings);
 });
