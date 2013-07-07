@@ -1,6 +1,16 @@
+// http://docs.angularjs.org/tutorial/step_07
+angular.module('cookingCat', []).
+  config(['$routeProvider', function($routeProvider) {
+  $routeProvider.
+      when('/recipes2', {templateUrl: 'partials/recipes-list.html',   controller: RecipeController}).
+      when('/recipe2/:recipeId', {templateUrl: 'partials/recipe-detail.html', controller: RecipeDetailController}).
+      otherwise({redirectTo: '/recipes2'});
+}]);
+
 jQuery(document).ready(function ($) {
 
   /* Use this js doc for all application specific JS */
+
 
   /* TABS --------------------------------- */
   /* Remove if you don't need :) */

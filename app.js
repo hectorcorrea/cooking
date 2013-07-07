@@ -94,8 +94,8 @@ app.get('/recipe/list', recipeRoutes.viewAll);
 app.get('/recipe', recipeRoutes.viewAll);
 app.get('/recipe/:url/:key', recipeRoutes.viewOne);
 
-app.get('/recipe2/list', recipeRoutes2.viewAll);
 app.get('/recipe2/listdata', recipeRoutes2.viewAllData);
+app.get('/recipe2', recipeRoutes2.viewAll);
 
 app.get('/log/current', logRoutes.current);
 app.get('/log/:date', logRoutes.byDate);

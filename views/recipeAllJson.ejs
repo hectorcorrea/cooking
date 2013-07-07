@@ -1,6 +1,6 @@
 <% include layoutTop %>
 
-<script src="/js/recipeController.js"></script>
+<script src="/js/controllers.js"></script>
 
 <div class="row">
 
@@ -15,15 +15,17 @@
 
 </div>
 
-<div class="row" ng-controller="recipeController">
+<div class="row" ng-controller="RecipeController">
   {{xxx}}
   <p ng-repeat="recipe in recipes">
-    {{recipe.name}}
+    <a href="{{recipe.link}}">{{recipe.name}}</a>
+
+    
   </p>
   <div class="eight columns">
   </div>
 </div>
 
-
+<div ng-view></div>
 
 <% include layoutBottom %>
