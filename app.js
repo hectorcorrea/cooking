@@ -6,7 +6,6 @@ var http = require('http');
 var logger = require('log-hanging-fruit').defaultLogger;
 var settingsUtil = require('./settings');
 var recipeRoutes = require('./routes/recipeRoutes');
-var recipeRoutes2 = require('./routes/recipeRoutes2');
 var siteRoutes = require('./routes/siteRoutes');
 var logRoutes = require('./routes/logRoutes');
 var dbSetup = require('./models/dbSetup');
@@ -77,25 +76,12 @@ app.configure('production', function() {
 
 
 // Routes
-app.post('/recipe/new', recipeRoutes.addNew);
-
-app.get('/recipe/:url/:key/edit', recipeRoutes.edit);
-app.post('/recipe/save/:key', recipeRoutes.save);
-
-app.get('/recipe/:url/:key/star', recipeRoutes.star);
-app.get('/recipe/:url/:key/unstar', recipeRoutes.unstar);
-
-app.get('/recipe/:url/:key/shop', recipeRoutes.shop);
-app.get('/recipe/:url/:key/noshop', recipeRoutes.noShop);
-
-app.get('/recipe/favorites', recipeRoutes.viewFavorites);
-app.get('/recipe/shopping', recipeRoutes.viewShopping);
-app.get('/recipe/list', recipeRoutes.viewAll);
-app.get('/recipe', recipeRoutes.viewAll);
-app.get('/recipe/:url/:key', recipeRoutes.viewOne);
-
-app.get('/recipe2/listdata', recipeRoutes2.viewAllData);
-app.get('/recipe2', recipeRoutes2.viewAll);
+app.get('/recipe/all', recipeRoutes.allRecipes);
+app.post('/recipe/:url/:key/star', recipeRoutes.star);
+app.post('/recipe/:url/:key/unstar', recipeRoutes.unstar);
+app.post('/recipe/:url/:key/shop', recipeRoutes.shop);
+app.post('/recipe/:url/:key/noShop', recipeRoutes.noShop);
+app.get('/recipe/:url/:key', recipeRoutes.oneRecipe);
 
 app.get('/log/current', logRoutes.current);
 app.get('/log/:date', logRoutes.byDate);
@@ -103,7 +89,7 @@ app.get('/log/:date', logRoutes.byDate);
 app.get('/search', siteRoutes.search);
 app.get('/credits', siteRoutes.credits);
 
-app.get('/', recipeRoutes.viewAll);
+app.get('/', recipeRoutes.index);
 
 app.get('*', siteRoutes.notFound);
 

@@ -1,0 +1,54 @@
+<style>
+.hidden { display: none;}
+.shown { display: inline;}
+</style>
+
+<div class="row">
+  <div class="twelve columns">
+    <h1>{{recipe.name}}</h1>
+    <h2>Ingredients</h2>
+    <div>
+      <a id="star" 
+        href="" 
+        ng-class="{true: 'shown', false: 'hidden'}[recipe.isStarred]"
+        ng-click="unstar();">(*)</a>
+      <a id="unstar" 
+        href="" 
+        ng-class="{true: 'hidden', false: 'shown'}[recipe.isStarred]"
+        ng-click="star();">(0)</a>
+      <a id="shop" 
+        href="" 
+        ng-class="{true: 'shown', false: 'hidden'}[recipe.isShoppingList]"
+        ng-click="noshop();">($)</a>
+      <a id="noshop" 
+        href="" 
+        ng-class="{true: 'hidden', false: 'shown'}[recipe.isShoppingList]"
+        ng-click="shop();">(-)</a>
+    <div>
+    <p><span ng-bind-html-unsafe="recipe.ingredients"></span>
+</p>
+    <h2>Directions</h2>
+    <p><span ng-bind-html-unsafe="recipe.directions"></span>
+    <!-- 
+      if(recipe.notes) { 
+        <h2>Notes</h2>
+        <p> recipe.notes </p>
+      }
+    -->
+  </div>
+
+  <div class="four columns">
+    <form name="input", action="{{recipe.editUrl}}", method="get">
+      <input type="submit" class="button" name = "edit" value="Edit" />
+    </form>
+  </div>
+
+  <div class="four columns">
+  </div>
+
+  <div class="four columns">
+  </div>
+</div>
+
+
+

@@ -2,9 +2,9 @@
 angular.module('cookingCat', []).
   config(['$routeProvider', function($routeProvider) {
   $routeProvider.
-      when('/recipes2', {templateUrl: 'partials/recipes-list.html',   controller: RecipeController}).
-      when('/recipe2/:recipeId', {templateUrl: 'partials/recipe-detail.html', controller: RecipeDetailController}).
-      otherwise({redirectTo: '/recipes2'});
+      when('/recipe', {templateUrl: 'partials/recipeList.html',   controller: RecipeController}).
+      when('/recipe/:url/:key', {templateUrl: 'partials/recipeDetail.html', controller: RecipeDetailController}).
+      otherwise({redirectTo: '/recipe'});
 }]);
 
 jQuery(document).ready(function ($) {
