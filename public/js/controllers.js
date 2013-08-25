@@ -52,7 +52,7 @@ function RecipeDetailController($scope, $routeParams, $http) {
 
 function RecipeEditController($scope, $routeParams, $http) {
 
-  var serverUrl = "/recipe/" + $routeParams.url + "/"+ $routeParams.key;
+  var serverUrl = "/recipe/" + $routeParams.url + "/"+ $routeParams.key + "/edit";
   $http.get(serverUrl).success(function(recipe) {
     recipe.saveUrl = "/recipe/save/" + recipe.key;
     $scope.recipe = recipe;

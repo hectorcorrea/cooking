@@ -85,6 +85,40 @@ var oneData = function(req, res) {
 };
 
 
+var edit = function(req, res) {
+
+  var key = parseInt(req.params.key)
+  var url = req.params.url;
+  var m = model.recipes(req.app.settings.config.dbUrl);
+
+  logger.info('recipeRoutes.edit (' + key + ', ' + url + ')');
+  m.getOne(key, true, function(err, doc){
+
+    if(err) {
+      return error(req, res, 'Error fetching recipe [' + key + ']', err);
+    }
+
+    if(doc === null) {
+      return notFound(req, res, key);
+    }
+
+    var recipe = {
+      name: doc.name,
+      key: doc.key,
+      url: doc.url,
+      ingredients: doc.ingredients,
+      directions: doc.directions,
+      notes: doc.notes,
+      isStarred: doc.isStarred,
+      isShoppingList: doc.isShoppingList
+    }
+
+    res.send(recipe);
+  });
+
+};
+
+
 var starOne = function(req, res) {
   logger.info('recipeRoutes.starOne');
   _starOne(req, res, true);
@@ -151,6 +185,6 @@ module.exports = {
   unstar: unstarOne,
   shop: shop,
   noShop: noShop,
-  edit: oneData,
+  edit: edit,
   save: save
 }
