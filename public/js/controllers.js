@@ -49,3 +49,13 @@ function RecipeDetailController($scope, $routeParams, $http) {
 
 }
 
+
+function RecipeEditController($scope, $routeParams, $http) {
+
+  var serverUrl = "/recipe/" + $routeParams.url + "/"+ $routeParams.key;
+  $http.get(serverUrl).success(function(recipe) {
+    recipe.saveUrl = "/recipe/save/" + recipe.key;
+    $scope.recipe = recipe;
+  });
+
+}

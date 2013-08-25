@@ -137,6 +137,12 @@ var noShop = function(req, res) {
 };
 
 
+var save = function(req, res) {
+  logger.info('recipeRoutes.save -- to be implemented');
+  res.send({saved: true});
+};
+
+
 module.exports = {
   index: index, 
   allRecipes: allData, 
@@ -144,5 +150,7 @@ module.exports = {
   star: starOne,
   unstar: unstarOne,
   shop: shop,
-  noShop: noShop
+  noShop: noShop,
+  edit: oneData,
+  save: save
 }

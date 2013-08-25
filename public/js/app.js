@@ -2,8 +2,18 @@
 angular.module('cookingCat', []).
   config(['$routeProvider', function($routeProvider) {
   $routeProvider.
-      when('/recipe', {templateUrl: 'partials/recipeList.html',   controller: RecipeController}).
-      when('/recipe/:url/:key', {templateUrl: 'partials/recipeDetail.html', controller: RecipeDetailController}).
+      when('/recipe', {
+        templateUrl: 'partials/recipeList.html',   
+        controller: RecipeController
+      }).
+      when('/recipe/:url/:key/edit', {
+        templateUrl: 'partials/recipeEdit.html', 
+        controller: RecipeEditController
+      }).
+      when('/recipe/:url/:key', {
+        templateUrl: 'partials/recipeDetail.html', 
+        controller: RecipeDetailController
+      }).
       otherwise({redirectTo: '/recipe'});
 }]);
 
