@@ -29,12 +29,8 @@
 </p>
     <h2>Directions</h2>
     <p><span ng-bind-html-unsafe="recipe.directions"></span>
-    <!-- 
-      if(recipe.notes) { 
-        <h2>Notes</h2>
-        <p> recipe.notes </p>
-      }
-    -->
+    <h2 ng-show="!!recipe.notes">Notes</h2>
+    <p><span ng-show="!!recipe.notes" ng-bind-html-unsafe="recipe.notes"></span>
   </div>
 
   <div class="four columns">
