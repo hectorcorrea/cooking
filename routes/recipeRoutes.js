@@ -14,12 +14,6 @@ var error = function(req, res, title, err) {
 };
 
 
-// var index = function(req, res) {
-//   logger.info('recipeRoutes.index');
-//   res.render('index.ejs');
-// };
-
-
 var allData = function(req, res) {
   logger.info('recipeRoutes.allData');
 
@@ -27,7 +21,10 @@ var allData = function(req, res) {
   m.getAll(function(err, documents){
 
     if(err) {
-      return error(req, res, 'Error fetching [' + title + '] recipes', err);
+      return res.status(500).send({
+        message: "Cannot retrieve recipes",
+        details: err 
+      });
     }
 
     var recipes = [];
@@ -208,6 +205,29 @@ var save = function(req, res) {
 };
 
 
+var addNew = function(req, res) {
+  
+  logger.info('recipeRoutes.addNew');
+  var m = model.recipes(req.app.settings.config.dbUrl);
+  m.addNew(function(err, newDoc) {
+
+    if(err) {
+      error(req, res, 'Error updating recipe', err);
+      res.status(500).send({ 
+        message: "Error saving new recipe",
+        details: err 
+      });
+      return;
+    }
+
+    logger.info('saved new');
+    console.log(newDoc);
+    res.send(newDoc);
+
+  });
+};
+
+
 module.exports = {
   // index: index, 
   allRecipes: allData, 
@@ -217,5 +237,6 @@ module.exports = {
   shop: shop,
   noShop: noShop,
   edit: edit,
-  save: save
+  save: save,
+  addNew: addNew
 }

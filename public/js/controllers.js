@@ -7,9 +7,9 @@ var routesConfig = function($routeProvider) {
     controller: RecipeController,
     templateUrl: 'partials/recipeList.html'   
   }).
-  when('/recipe/save/:key', {
-    controller: RecipeDetailController,
-    templateUrl: 'partials/recipeDetail.html',   
+  when('/recipe/new', {
+    controller: RecipeEditController,
+    templateUrl: 'partials/recipeEdit.html'   
   }).
   when('/recipe/:url/:key/edit', {
     controller: RecipeEditController,
@@ -27,12 +27,29 @@ var routesConfig = function($routeProvider) {
 cookingModule.config(routesConfig);
 
 
-function RecipeController($scope, $http) {
+function RecipeController($scope, $http, $location) {
 
-  var serverUrl = "/recipe/all"
-  $http.get(serverUrl).success(function(recipes) {
-    $scope.recipes = recipes;
-  });
+  $http.get("/recipe/all").
+    success(function(recipes) {
+      $scope.recipes = recipes;
+      $scope.errorMsg = null;
+    }).
+    error(function(e) {
+      $scope.errorMsg = e.message + "/" + e.details;
+      console.log($scope.errorMsg);
+    });
+
+  $scope.new = function() {
+    $http.post("/recipe/new").
+      success(function(recipe) {
+        var editUrl = "/recipe/" + recipe.url + "/" + recipe.key + "/edit";
+        $location.url(editUrl);
+      }).
+      error(function(e) {
+        $scope.errorMsg = e.message + "/" + e.details;
+        console.log($scope.errorMsg);
+      });
+  }
 
 }
 
@@ -87,16 +104,13 @@ function RecipeEditController($scope, $routeParams, $http, $location) {
 
   $scope.submit = function() {
     var saveUrl = "/recipe/save/" + $routeParams.key;
-    console.log("Saving: " + saveUrl);
-    $http.post(saveUrl, $scope.recipe)
-    .success(function(x) {
-      console.log("done saving");
+    $http.post(saveUrl, $scope.recipe).
+    success(function(x) {
       var viewUrl = "/recipe/" + x.url + "/"+ x.key;
       $location.url(viewUrl);
-    })
-    .error(function(e) {
-      console.log("error saving");
-      console.log(e);
+    }).
+    error(function(e) {
+      $scope.errorMsg = e.message;
     }); 
   }
 
@@ -104,6 +118,7 @@ function RecipeEditController($scope, $routeParams, $http, $location) {
   $http.get(serverUrl).success(function(recipe) {
     recipe.saveUrl = "/recipe/save/" + recipe.key;
     $scope.recipe = recipe;
+    $scope.errorMsg = null;
   });
 
 }

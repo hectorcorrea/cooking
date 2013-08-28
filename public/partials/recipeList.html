@@ -1,7 +1,7 @@
-<form name="input", action="/recipe/new", method="post">
-  <h3>All Recipes
-  <input type="submit" class="button" name = "save" value="New" />
-  </h3>
+<h3>All Recipes</h3>
+<form ng-controller="RecipeController">
+  <button ng-click="new()">New</button>
+  <p ng-bind="errorMsg"></p>
 </form>
 
 <div ng-controller="RecipeController">
