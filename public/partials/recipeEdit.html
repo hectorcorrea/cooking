@@ -1,41 +1,32 @@
-<div class="row">
-  <div class="twelve columns">
+<form ng-controller="RecipeEditController">
+<fieldset>
+  <p>
+  <label>Name</label> 
+  <input type="text" ng-model="recipe.name" placeholder="Recipe name" />
+  </p>
 
-    <form name="input", action="{{recipe.saveUrl}}", method="post">
-    <fieldset>
-      <p>
-      <label>Name</label> 
-      <input type="text" name="name" value="{{recipe.name}}" placeholder="Recipe name" />
-      </p>
+  <p>
+  <label>Ingredients<label> 
+  <textarea ng-model="recipe.ingredients", rows="10", cols="60" placeholder="Enter ingredients here"></textarea>
+  </p>
 
-      <p>
-      <label>Ingredients<label> 
-      <textarea name="ingredients", rows="10", cols="60" 
-      placeholder="Enter ingredients here">{{recipe.ingredients}}</textarea>
-      </p>
+  <p>
+  <label>Directions<label> 
+  <textarea ng-model="recipe.directions", rows="10", cols="60" 
+  placeholder="Enter directions here"></textarea>
+  </p>
 
-      <p>
-      <label>Directions<label> 
-      <textarea name="directions", rows="10", cols="60" 
-      placeholder="Enter directions here">{{recipe.directions}}</textarea>
-      </p>
+  <p>
+  <label>Notes<label> 
+  <textarea ng-model="recipe.notes", rows="10", cols="60" 
+  placeholder="Enter notes here"></textarea>
+  </p>
 
-      <p>
-      <label>Notes<label> 
-      <textarea name="notes", rows="10", cols="60" 
-      placeholder="Enter notes here">{{recipe.notes}}</textarea>
-      </p>
+  <p>
+  <button ng-click="submit()">Save</save>
+  </p>
 
-      <p>
-      <input type="submit" class="button" name = "save" value="Save" />
-      </p>
+  <p>ID {{recipe.key}}<p/>
 
-      <p>ID {{recipe.key}}<p/>
-
-    </fieldset>
-    </form>
-
-  </div>
-
-</div>
-
+</fieldset>
+</form>

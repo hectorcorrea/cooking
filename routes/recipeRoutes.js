@@ -14,10 +14,10 @@ var error = function(req, res, title, err) {
 };
 
 
-var index = function(req, res) {
-  logger.info('recipeRoutes.index');
-  res.render('index.ejs');
-};
+// var index = function(req, res) {
+//   logger.info('recipeRoutes.index');
+//   res.render('index.ejs');
+// };
 
 
 var allData = function(req, res) {
@@ -172,13 +172,44 @@ var noShop = function(req, res) {
 
 
 var save = function(req, res) {
-  logger.info('recipeRoutes.save -- to be implemented');
-  res.send({saved: true});
+
+  var key = parseInt(req.params.key);
+  logger.info('saving ' + key);
+
+  var data = {
+    key: key,
+    name: req.body.name,
+    ingredients: req.body.ingredients,
+    directions: req.body.directions,
+    notes: req.body.notes
+  };
+
+  if(data.name === '') {
+    logger.info('error, name cannot be empty');
+    res.status(500).send({ message: "Recipe name cannot be empty" });
+    return;
+  }
+
+  var m = model.recipes(req.app.settings.config.dbUrl);
+  m.updateOne(data, function(err, updatedDoc) {
+
+    if(err) {
+      error(req, res, 'Error updating recipe', err);
+      res.status(500).send({ message: "Error saving recipe" });
+      return;
+    }
+
+    logger.info('saved');
+    console.log(updatedDoc);
+    res.send(updatedDoc);
+
+  });
+
 };
 
 
 module.exports = {
-  index: index, 
+  // index: index, 
   allRecipes: allData, 
   oneRecipe: oneData,
   star: starOne,

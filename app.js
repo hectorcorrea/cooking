@@ -90,15 +90,16 @@ app.get('/recipe/:url/:key', recipeRoutes.oneRecipe);
 app.get('/log/current', logRoutes.current);
 app.get('/log/:date', logRoutes.byDate);
 
-app.get('/search', siteRoutes.search);
-app.get('/credits', siteRoutes.credits);
-
-app.get('/', recipeRoutes.index);
+// our humble home page
+app.get('/', function(req, res) {
+  logger.info('recipeRoutes.index');
+  res.render('index')
+});
 
 app.get('*', siteRoutes.notFound);
 
 
-// Fire it up! 
+// Fire up the web server! 
 var server = http.createServer(app);
 var port = app.get('port');
 server.listen(port, function() {

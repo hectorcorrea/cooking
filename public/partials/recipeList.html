@@ -1,24 +1,12 @@
-<div class="row">
+<form name="input", action="/recipe/new", method="post">
+  <h3>All Recipes
+  <input type="submit" class="button" name = "save" value="New" />
+  </h3>
+</form>
 
-  <div class="twelve columns">
-    <form name="input", action="/recipe/new", method="post">
-      <h3>All Recipes
-        <input type="submit" class="button" name = "save" value="New" />
-      </h3>
-    </form>
-
-  </div>
-
-</div>
-
-<div class="row" ng-controller="RecipeController">
-  {{xxx}}
+<div ng-controller="RecipeController">
   <p ng-repeat="recipe in recipes">
-    <a href="#/recipe/{{recipe.url}}/{{recipe.key}}">{{recipe.name}}</a>
-
-    
+    <a ng-href="#/recipe/{{recipe.url}}/{{recipe.key}}">{{recipe.name}}</a>
   </p>
-  <div class="eight columns">
-  </div>
 </div>
 

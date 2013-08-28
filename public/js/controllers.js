@@ -1,3 +1,32 @@
+// http://docs.angularjs.org/tutorial/step_07
+var cookingModule = angular.module('cookingModule', []);
+
+var routesConfig = function($routeProvider) {
+  $routeProvider.
+  when('/recipe', {
+    controller: RecipeController,
+    templateUrl: 'partials/recipeList.html'   
+  }).
+  when('/recipe/save/:key', {
+    controller: RecipeDetailController,
+    templateUrl: 'partials/recipeDetail.html',   
+  }).
+  when('/recipe/:url/:key/edit', {
+    controller: RecipeEditController,
+    templateUrl: 'partials/recipeEdit.html' 
+  }).
+  when('/recipe/:url/:key', {
+    controller: RecipeDetailController,
+    templateUrl: 'partials/recipeDetail.html' 
+  }).
+  otherwise({
+    redirectTo: '/recipe'
+  });
+}
+
+cookingModule.config(routesConfig);
+
+
 function RecipeController($scope, $http) {
 
   var serverUrl = "/recipe/all"
@@ -8,11 +37,11 @@ function RecipeController($scope, $http) {
 }
 
 
-function RecipeDetailController($scope, $routeParams, $http) {
+function RecipeDetailController($scope, $routeParams, $http, $location) {
 
   var serverUrl = "/recipe/" + $routeParams.url + "/"+ $routeParams.key;
   $http.get(serverUrl).success(function(recipe) {
-    var clientUrl = "#/recipe/" + recipe.url + "/" + recipe.key;
+    var clientUrl = "/recipe/" + recipe.url + "/" + recipe.key;
     recipe.editUrl = clientUrl + "/edit";
     recipe.starUrl = clientUrl + "/star";
     recipe.unstarUrl = clientUrl + "/unstar";
@@ -47,10 +76,29 @@ function RecipeDetailController($scope, $routeParams, $http) {
     });
   }
 
+  $scope.edit = function() {
+    $location.url($scope.recipe.editUrl);
+  }
+
 }
 
 
-function RecipeEditController($scope, $routeParams, $http) {
+function RecipeEditController($scope, $routeParams, $http, $location) {
+
+  $scope.submit = function() {
+    var saveUrl = "/recipe/save/" + $routeParams.key;
+    console.log("Saving: " + saveUrl);
+    $http.post(saveUrl, $scope.recipe)
+    .success(function(x) {
+      console.log("done saving");
+      var viewUrl = "/recipe/" + x.url + "/"+ x.key;
+      $location.url(viewUrl);
+    })
+    .error(function(e) {
+      console.log("error saving");
+      console.log(e);
+    }); 
+  }
 
   var serverUrl = "/recipe/" + $routeParams.url + "/"+ $routeParams.key + "/edit";
   $http.get(serverUrl).success(function(recipe) {
@@ -59,3 +107,4 @@ function RecipeEditController($scope, $routeParams, $http) {
   });
 
 }
+
