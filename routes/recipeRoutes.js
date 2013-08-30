@@ -3,15 +3,34 @@ var logger = require('log-hanging-fruit').defaultLogger;
 
 
 var notFound = function(req, res, key) {
-  logger.warn('recipeRoutes.notFound. Key [' + key + ']');
-  res.status(404).send({ status: 404, message: 'Recipe not found' });
+  logger.warn('Recipe not found. Key [' + key + ']');
+  res.status(404).send({message: 'Recipe not found' });
 };
 
 
 var error = function(req, res, title, err) {
   logger.error(title + ' ' + err);
-  res.status(500).send({message: err});
+  res.status(500).send({message: title, details: err});
 };
+
+
+var recipesToJson = function(documents) {
+  var recipes = [];
+  var i, recipe, doc; 
+  for(i=0; i<documents.length; i++) {
+    doc = documents[i];
+    recipe = {
+      name: doc.name,
+      link: 'recipe/' + doc.url + '/' + doc.key,
+      key: doc.key,
+      url: doc.url,
+      isStarred: doc.isStarred,
+      isShoppingList: doc.isShoppingList
+    }
+    recipes.push(recipe);
+  }
+  return recipes;
+}
 
 
 var allData = function(req, res) {
@@ -21,32 +40,48 @@ var allData = function(req, res) {
   m.getAll(function(err, documents){
 
     if(err) {
-      return res.status(500).send({
-        message: "Cannot retrieve recipes",
-        details: err 
-      });
+      return error(req, res, "Cannot retrieve all recipes", err);
     }
 
-    var recipes = [];
-    var i, recipe, doc; 
-    for(i=0; i<documents.length; i++) {
-      doc = documents[i];
-      recipe = {
-        name: doc.name,
-        link: 'recipe/' + doc.url + '/' + doc.key,
-        key: doc.key,
-        url: doc.url,
-        isStarred: doc.isStarred,
-        isShoppingList: doc.isShoppingList
-      }
-      recipes.push(recipe);
-    }
-
+    var recipes = recipesToJson(documents);
     res.send(recipes);
   });
 
 };
 
+
+var favorites = function(req, res) {
+  logger.info('recipeRoutes.favorites');
+
+  var m = model.recipes(req.app.settings.config.dbUrl);
+  m.getFavorites(function(err, documents){
+
+    if(err) {
+      return error(req, res, "Cannot retrieve favorite recipes", err);
+    }
+
+    var recipes = recipesToJson(documents);
+    res.send(recipes);
+  });
+
+};
+
+
+var shopping = function(req, res) {
+  logger.info('recipeRoutes.shopping');
+
+  var m = model.recipes(req.app.settings.config.dbUrl);
+  m.getShopping(function(err, documents){
+
+    if(err) {
+      return error(req, res, "Cannot retrieve shopping list", err);
+    }
+
+    var recipes = recipesToJson(documents);
+    res.send(recipes);
+  });
+
+};
 
 var oneData = function(req, res) {
 
@@ -230,7 +265,8 @@ var addNew = function(req, res) {
 
 module.exports = {
   allRecipes: allData, 
-  favorites: allData, 
+  favorites: favorites,
+  shopping: shopping, 
   oneRecipe: oneData,
   star: starOne,
   unstar: unstarOne,

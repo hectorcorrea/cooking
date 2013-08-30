@@ -11,6 +11,10 @@ var routesConfig = function($routeProvider) {
     controller: FavsController,
     templateUrl: 'partials/recipeFavs.html'   
   }).
+  when('/recipe/shopping', {
+    controller: ShoppingController,
+    templateUrl: 'partials/recipeShopping.html'   
+  }).
   when('/recipe/new', {
     controller: RecipeEditController,
     templateUrl: 'partials/recipeEdit.html'   
@@ -64,6 +68,33 @@ function RecipeController($scope, $http, $location) {
 function FavsController($scope, $http, $location) {
 
   $http.get("/recipe/favorites").
+    success(function(recipes) {
+      $scope.recipes = recipes;
+      $scope.errorMsg = null;
+    }).
+    error(function(e) {
+      $scope.errorMsg = e.message + "/" + e.details;
+      console.log($scope.errorMsg);
+    });
+
+  $scope.new = function() {
+    $http.post("/recipe/new").
+      success(function(recipe) {
+        var editUrl = "/recipe/" + recipe.url + "/" + recipe.key + "/edit";
+        $location.url(editUrl);
+      }).
+      error(function(e) {
+        $scope.errorMsg = e.message + "/" + e.details;
+        console.log($scope.errorMsg);
+      });
+  }
+
+}
+
+
+function ShoppingController($scope, $http, $location) {
+
+  $http.get("/recipe/shopping").
     success(function(recipes) {
       $scope.recipes = recipes;
       $scope.errorMsg = null;
