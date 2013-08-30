@@ -1,0 +1,12 @@
+<h3>Shopping List</h3>
+<form ng-controller="ShoppingController">
+  <button ng-click="new()" type="button" class="btn btn-primary">New Recipe »</button>
+  <p ng-bind="errorMsg"></p>
+</form>
+
+<div ng-controller="ShoppingController">
+  <p ng-repeat="recipe in recipes">
+    <a ng-href="#/recipe/{{recipe.url}}/{{recipe.key}}">{{recipe.name}}</a>
+  </p>
+</div>
+
