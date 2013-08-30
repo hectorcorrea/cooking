@@ -1,37 +1,82 @@
 <!DOCTYPE html>
 
-<html ng-app="cookingModule">
-<head>
-  <meta charset="utf-8" />
+<html ng-app="cookingModule" lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="A simple cooking book">
+    <meta name="author" content="hector@hectorcorrea.com">
 
-  <!-- Set the viewport width to device width for mobile -->
-  <meta name="viewport" content="width=device-width" />
+    <title>Las Delicias</title>
 
-  <title>Las Delicias</title>
+      <!-- Icon for Apple devices -->
+    <link rel="apple-touch-icon" href="/favicon.png"/>
+
+    <!-- Bootstrap core CSS -->
+      <link href="/css/bootstrap.css" rel="stylesheet">
+
+      <!-- Custom styles for this template -->
+      <link href="/css/jumbotron.css" rel="stylesheet">
+
+      <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0-rc2/css/bootstrap-glyphicons.css" rel="stylesheet">
+
+      <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+      <!--[if lt IE 9]>
+        <script src="../../assets/js/html5shiv.js"></script>
+        <script src="../../assets/js/respond.min.js"></script>
+      <![endif]-->
+  </head>
+
+  <body style="">
+
+    <div class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="/#">Las Delicias</a>
+        </div>
+        <div class="navbar-collapse collapse">
+          <ul class="nav navbar-nav">
+            <li class="active"><a href="/#/recipe">Home</a></li>
+            <li><a href="/#/recipe/favorites">Favorites</a></li>
+            <li><a href="/#/recipe/shopping">Shopping</a></li>
+          </ul>
+          <form class="navbar-form navbar-right">
+            <div class="form-group">
+              <input type="text" placeholder="" class="form-control">
+            </div>
+            <button type="submit" class="btn btn-success">Search</button>
+          </form>
+        </div><!--/.navbar-collapse -->
+      </div>
+    </div>
+
+    <div class="container">
+      <div ng-view>(content goes here)</div>
+      <hr>
+    </div> <!-- /container -->
+
+    <div class="container">
+      <footer>
+        <p>&copy; 2012-<%= (new Date()).getFullYear() %> H&amp;K, all rights reserved.</p>
+      </footer>
+    </div>
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="/js/jquery.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.0.7/angular.min.js"></script>
+    <script src="/js/controllers.js"></script>
   
-  <!-- Icon for Apple devices -->
-  <link rel="apple-touch-icon" href="/favicon.png"/>
-    
-</head>
-
-<body>   
-
-  <div>    
-    <ul>
-      <li><a href="/#/recipe">Home</a></li>
-      <li><a href="/#/recipe">Recipes</a></li>
-      <li><a href="/#/recipe/favorites">Favorites</a></li>
-      <li><a href="/#/recipe/shopping">Shopping</a></li>
-      <li><a href="/#/search">Search</a></li>             
-    </ul>                     
-  </div>
-
-  <div ng-view>(content goes here)</div>
-
-  <p>&copy; 2012-<%= (new Date()).getFullYear() %> H&K, all rights reserved.</p>
-
-  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.0.7/angular.min.js"></script>
-  <script src="/js/controllers.js"></script>
-
-</body>
+  </body>
 </html>
+
+
+

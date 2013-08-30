@@ -7,6 +7,10 @@ var routesConfig = function($routeProvider) {
     controller: RecipeController,
     templateUrl: 'partials/recipeList.html'   
   }).
+  when('/recipe/favorites', {
+    controller: FavsController,
+    templateUrl: 'partials/recipeFavs.html'   
+  }).
   when('/recipe/new', {
     controller: RecipeEditController,
     templateUrl: 'partials/recipeEdit.html'   
@@ -30,6 +34,36 @@ cookingModule.config(routesConfig);
 function RecipeController($scope, $http, $location) {
 
   $http.get("/recipe/all").
+    success(function(recipes) {
+      $scope.recipes = recipes;
+      $scope.errorMsg = null;
+    }).
+    error(function(e) {
+      $scope.errorMsg = e.message + "/" + e.details;
+      console.log($scope.errorMsg);
+    });
+
+  $scope.new = function() {
+    $http.post("/recipe/new").
+      success(function(recipe) {
+        var editUrl = "/recipe/" + recipe.url + "/" + recipe.key + "/edit";
+        $location.url(editUrl);
+      }).
+      error(function(e) {
+        $scope.errorMsg = e.message + "/" + e.details;
+        console.log($scope.errorMsg);
+      });
+  }
+
+}
+
+
+// Merge this code with RecipeController, 
+// perhaps by moving common functionality to 
+// Angular services
+function FavsController($scope, $http, $location) {
+
+  $http.get("/recipe/favorites").
     success(function(recipes) {
       $scope.recipes = recipes;
       $scope.errorMsg = null;

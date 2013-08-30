@@ -1,10 +1,10 @@
-<h3>All Recipes</h3>
-<form ng-controller="RecipeController">
+<h3>Favorite Recipes</h3>
+<form ng-controller="FavsController">
   <button ng-click="new()" type="button" class="btn btn-primary">New Recipe »</button>
   <p ng-bind="errorMsg"></p>
 </form>
 
-<div ng-controller="RecipeController">
+<div ng-controller="FavsController">
   <p ng-repeat="recipe in recipes">
     <a ng-href="#/recipe/{{recipe.url}}/{{recipe.key}}">{{recipe.name}}</a>
   </p>

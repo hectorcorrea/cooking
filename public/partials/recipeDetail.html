@@ -6,24 +6,15 @@
 <div ng-controller="RecipeDetailController">
   <h1>{{recipe.name}}</h1>
 
-  <div>
-    <a id="star" 
-      href="" 
-      ng-class="{true: 'shown', false: 'hidden'}[recipe.isStarred]"
-      ng-click="unstar();">(*)</a>
-    <a id="unstar" 
-      href="" 
-      ng-class="{true: 'hidden', false: 'shown'}[recipe.isStarred]"
-      ng-click="star();">(0)</a>
-    <a id="shop" 
-      href="" 
-      ng-class="{true: 'shown', false: 'hidden'}[recipe.isShoppingList]"
-      ng-click="noshop();">($)</a>
-    <a id="noshop" 
-      href="" 
-      ng-class="{true: 'hidden', false: 'shown'}[recipe.isShoppingList]"
-      ng-click="shop();">(-)</a>
-  <div>
+  <h2>
+    <a id="star" ng-click="unstar()" ng-class="{true: 'shown', false: 'hidden'}[recipe.isStarred]"><span class="glyphicon glyphicon-star"></span></a>
+
+    <a id="unstar" ng-click="star()" ng-class="{true: 'hidden', false: 'shown'}[recipe.isStarred]"><span class="glyphicon glyphicon-star" style="opacity: 0.25"></span></a>
+    
+    <a id="shop" ng-click="noshop()" ng-class="{true: 'shown', false: 'hidden'}[recipe.isShoppingList]"><span class="glyphicon glyphicon-shopping-cart" ></span></a>
+    
+    <a id="noshop" ng-click="shop()" ng-class="{true: 'hidden', false: 'shown'}[recipe.isShoppingList]"><span class="glyphicon glyphicon-shopping-cart" style="opacity: 0.25"></span></a>
+  </h2>
 
   <h2>Ingredients</h2>
   <p><span ng-bind-html-unsafe="recipe.ingredients"></span></p>
@@ -34,6 +25,6 @@
   <h2 ng-show="!!recipe.notes">Notes</h2>
   <p><span ng-show="!!recipe.notes" ng-bind-html-unsafe="recipe.notes"></span></p>
 
-  <button ng-click="edit()">Edit</button>
+  <button ng-click="edit()" type="button" class="btn btn-primary">Edit</button>
 
 </div>

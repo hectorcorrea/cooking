@@ -229,8 +229,8 @@ var addNew = function(req, res) {
 
 
 module.exports = {
-  // index: index, 
   allRecipes: allData, 
+  favorites: allData, 
   oneRecipe: oneData,
   star: starOne,
   unstar: unstarOne,
