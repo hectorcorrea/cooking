@@ -82,6 +82,31 @@ var shopping = function(req, res) {
 
 };
 
+
+var search = function(req, res) {
+
+  var text = req.query.text;
+  if (typeof(text) != 'string') {
+    logger.info('recipeRoutes.search (no text specified)');
+    return res.send({});
+  }
+
+  logger.info('recipeRoutes.search (' + text + ')');
+
+  var m = model.recipes(req.app.settings.config.dbUrl);
+  m.search(text, function(err, documents){
+
+    if(err) {
+      return error(req, res, "Error searching", err);
+    }
+
+    var recipes = recipesToJson(documents);
+    res.send(recipes);
+  });
+
+};
+
+
 var oneData = function(req, res) {
 
   var key = parseInt(req.params.key)
@@ -231,7 +256,6 @@ var save = function(req, res) {
     }
 
     logger.info('saved');
-    console.log(updatedDoc);
     res.send(updatedDoc);
 
   });
@@ -254,8 +278,7 @@ var addNew = function(req, res) {
       return;
     }
 
-    logger.info('saved new');
-    console.log(newDoc);
+    logger.info('Saved new recipe. Key: ' + newDoc.key);
     res.send(newDoc);
 
   });
@@ -266,6 +289,7 @@ module.exports = {
   allRecipes: allData, 
   favorites: favorites,
   shopping: shopping, 
+  search: search,
   oneRecipe: oneData,
   star: starOne,
   unstar: unstarOne,

@@ -53,6 +53,11 @@ var fetchShopping = function(callback) {
 };
 
 
+var search = function(textToSearch, callback) {
+  var query = {'searchText': {'$regex': textToSearch}};
+  _fetchList(query, callback);
+}
+
 var _fetchList = function(query, callback) {
 
   mongoConnect.execute(function(err, db) {
@@ -230,6 +235,7 @@ module.exports = {
   fetchAll: fetchAll,
   fetchFavorites: fetchFavorites,
   fetchShopping: fetchShopping,
+  search: search,
   fetchOne: fetchOne,
   addOne: addOne,
   updateOne: updateOne,

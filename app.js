@@ -81,6 +81,7 @@ app.configure('production', function() {
 app.get('/recipes/all', recipeRoutes.allRecipes);
 app.get('/recipes/favorites', recipeRoutes.favorites);
 app.get('/recipes/shopping', recipeRoutes.shopping);
+app.get('/recipes/search', recipeRoutes.search);
 
 app.get('/recipes/:url/:key/edit', recipeRoutes.edit);
 app.post('/recipes/save/:key', recipeRoutes.save);

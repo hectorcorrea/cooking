@@ -26,6 +26,15 @@ var decodeText = function(encoder, text) {
 };
 
 
+var searchText = function(text) {
+  if (typeof(text) === 'string') {
+    // http://stackoverflow.com/a/9364527/446681
+    return text.replace(/\W/g, ' ').toLowerCase();
+  }
+  return '';
+};
+
+
 var prepareForSave = function(data) {
   // encode data first
   var encoder = new Encoder('entity');
@@ -37,6 +46,10 @@ var prepareForSave = function(data) {
   // calculate a few fields
   data.url = util.getUrlFromName(data.name);
   data.sortName = data.name.toLowerCase();
+  data.searchText = searchText(data.name) + ' ' + 
+    searchText(data.ingredients) + ' '
+    searchText(data.directions) + ' '
+    searchText(data.notes) + ' ';
 
   data.isStarred = data.isStarred === true;
   data.isShoppingList = data.isShoppingList === true;
@@ -74,6 +87,17 @@ var getShopping = function(cb) {
   db.fetchShopping(function(err, documents) {
     cb(err, documents);
   });
+};
+
+
+var search = function(text, cb) {
+
+  db.setup(dbUrl);
+  var cleanText = searchText(text);
+  db.search(text, function(err, documents) {
+    cb(err, documents);
+  });
+  
 };
 
 
@@ -160,6 +184,7 @@ var publicApi = {
   getAll: getAll,
   getFavorites: getFavorites,
   getShopping: getShopping,
+  search: search,
   getOne: getOne,
   addNew: addNew,
   updateOne: updateOne,
