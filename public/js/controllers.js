@@ -3,32 +3,37 @@ var cookingModule = angular.module('cookingModule', []);
 
 var routesConfig = function($routeProvider) {
   $routeProvider.
-  when('/recipe', {
+  when('/recipes', {
     controller: RecipeController,
     templateUrl: 'partials/recipeList.html'   
   }).
-  when('/recipe/favorites', {
+  when('/recipes/favorites', {
     controller: FavsController,
     templateUrl: 'partials/recipeFavs.html'   
   }).
-  when('/recipe/shopping', {
+  when('/recipes/shopping', {
     controller: ShoppingController,
     templateUrl: 'partials/recipeShopping.html'   
   }).
-  when('/recipe/new', {
+  when('/recipes/new', {
     controller: RecipeEditController,
     templateUrl: 'partials/recipeEdit.html'   
   }).
-  when('/recipe/:url/:key/edit', {
+  when('/recipes/:url/:key/edit', {
     controller: RecipeEditController,
     templateUrl: 'partials/recipeEdit.html' 
   }).
-  when('/recipe/:url/:key', {
+  when('/recipes/:url/:key', {
     controller: RecipeDetailController,
     templateUrl: 'partials/recipeDetail.html' 
   }).
+  when('/credits', {
+    controller: EmptyController,
+    templateUrl: 'partials/credits.html' 
+  }).
   otherwise({
-    redirectTo: '/recipe'
+    controller: EmptyController,
+    templateUrl: 'partials/notFound.html' 
   });
 }
 
@@ -37,7 +42,7 @@ cookingModule.config(routesConfig);
 
 function RecipeController($scope, $http, $location) {
 
-  $http.get("/recipe/all").
+  $http.get("/recipes/all").
     success(function(recipes) {
       $scope.recipes = recipes;
       $scope.errorMsg = null;
@@ -48,9 +53,9 @@ function RecipeController($scope, $http, $location) {
     });
 
   $scope.new = function() {
-    $http.post("/recipe/new").
+    $http.post("/recipes/new").
       success(function(recipe) {
-        var editUrl = "/recipe/" + recipe.url + "/" + recipe.key + "/edit";
+        var editUrl = "/recipes/" + recipe.url + "/" + recipe.key + "/edit";
         $location.url(editUrl);
       }).
       error(function(e) {
@@ -67,7 +72,7 @@ function RecipeController($scope, $http, $location) {
 // Angular services
 function FavsController($scope, $http, $location) {
 
-  $http.get("/recipe/favorites").
+  $http.get("/recipes/favorites").
     success(function(recipes) {
       $scope.recipes = recipes;
       $scope.errorMsg = null;
@@ -78,9 +83,9 @@ function FavsController($scope, $http, $location) {
     });
 
   $scope.new = function() {
-    $http.post("/recipe/new").
+    $http.post("/recipes/new").
       success(function(recipe) {
-        var editUrl = "/recipe/" + recipe.url + "/" + recipe.key + "/edit";
+        var editUrl = "/recipes/" + recipe.url + "/" + recipe.key + "/edit";
         $location.url(editUrl);
       }).
       error(function(e) {
@@ -94,7 +99,7 @@ function FavsController($scope, $http, $location) {
 
 function ShoppingController($scope, $http, $location) {
 
-  $http.get("/recipe/shopping").
+  $http.get("/recipes/shopping").
     success(function(recipes) {
       $scope.recipes = recipes;
       $scope.errorMsg = null;
@@ -105,9 +110,9 @@ function ShoppingController($scope, $http, $location) {
     });
 
   $scope.new = function() {
-    $http.post("/recipe/new").
+    $http.post("/recipes/new").
       success(function(recipe) {
-        var editUrl = "/recipe/" + recipe.url + "/" + recipe.key + "/edit";
+        var editUrl = "/recipes/" + recipe.url + "/" + recipe.key + "/edit";
         $location.url(editUrl);
       }).
       error(function(e) {
@@ -121,9 +126,9 @@ function ShoppingController($scope, $http, $location) {
 
 function RecipeDetailController($scope, $routeParams, $http, $location) {
 
-  var serverUrl = "/recipe/" + $routeParams.url + "/"+ $routeParams.key;
+  var serverUrl = "/recipes/" + $routeParams.url + "/"+ $routeParams.key;
   $http.get(serverUrl).success(function(recipe) {
-    var clientUrl = "/recipe/" + recipe.url + "/" + recipe.key;
+    var clientUrl = "/recipes/" + recipe.url + "/" + recipe.key;
     recipe.editUrl = clientUrl + "/edit";
     recipe.starUrl = clientUrl + "/star";
     recipe.unstarUrl = clientUrl + "/unstar";
@@ -168,10 +173,10 @@ function RecipeDetailController($scope, $routeParams, $http, $location) {
 function RecipeEditController($scope, $routeParams, $http, $location) {
 
   $scope.submit = function() {
-    var saveUrl = "/recipe/save/" + $routeParams.key;
+    var saveUrl = "/recipes/save/" + $routeParams.key;
     $http.post(saveUrl, $scope.recipe).
     success(function(x) {
-      var viewUrl = "/recipe/" + x.url + "/"+ x.key;
+      var viewUrl = "/recipes/" + x.url + "/"+ x.key;
       $location.url(viewUrl);
     }).
     error(function(e) {
@@ -179,12 +184,15 @@ function RecipeEditController($scope, $routeParams, $http, $location) {
     }); 
   }
 
-  var serverUrl = "/recipe/" + $routeParams.url + "/"+ $routeParams.key + "/edit";
+  var serverUrl = "/recipes/" + $routeParams.url + "/"+ $routeParams.key + "/edit";
   $http.get(serverUrl).success(function(recipe) {
-    recipe.saveUrl = "/recipe/save/" + recipe.key;
+    recipe.saveUrl = "/recipes/save/" + recipe.key;
     $scope.recipe = recipe;
     $scope.errorMsg = null;
   });
 
 }
 
+
+function EmptyController($scope) {
+}

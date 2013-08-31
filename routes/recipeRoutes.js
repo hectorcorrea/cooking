@@ -21,7 +21,6 @@ var recipesToJson = function(documents) {
     doc = documents[i];
     recipe = {
       name: doc.name,
-      link: 'recipe/' + doc.url + '/' + doc.key,
       key: doc.key,
       url: doc.url,
       isStarred: doc.isStarred,

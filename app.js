@@ -6,7 +6,6 @@ var http = require('http');
 var logger = require('log-hanging-fruit').defaultLogger;
 var settingsUtil = require('./settings');
 var recipeRoutes = require('./routes/recipeRoutes');
-var siteRoutes = require('./routes/siteRoutes');
 var logRoutes = require('./routes/logRoutes');
 var dbSetup = require('./models/dbSetup');
 
@@ -75,32 +74,38 @@ app.configure('production', function() {
 });
 
 
-// Routes
+// These routes return JSON
+// Should they be /api/recipes/whatever to be
+// significantly different from the client routes
+// /#recipes/whatever ? 
+app.get('/recipes/all', recipeRoutes.allRecipes);
+app.get('/recipes/favorites', recipeRoutes.favorites);
+app.get('/recipes/shopping', recipeRoutes.shopping);
 
-app.get('/recipe/all', recipeRoutes.allRecipes);
-app.get('/recipe/favorites', recipeRoutes.favorites);
-app.get('/recipe/shopping', recipeRoutes.shopping);
+app.get('/recipes/:url/:key/edit', recipeRoutes.edit);
+app.post('/recipes/save/:key', recipeRoutes.save);
+app.post('/recipes/new', recipeRoutes.addNew);
 
-app.get('/recipe/:url/:key/edit', recipeRoutes.edit);
-app.post('/recipe/save/:key', recipeRoutes.save);
-app.post('/recipe/new', recipeRoutes.addNew);
+app.post('/recipes/:url/:key/star', recipeRoutes.star);
+app.post('/recipes/:url/:key/unstar', recipeRoutes.unstar);
+app.post('/recipes/:url/:key/shop', recipeRoutes.shop);
+app.post('/recipes/:url/:key/noShop', recipeRoutes.noShop);
+app.get('/recipes/:url/:key', recipeRoutes.oneRecipe);
 
-app.post('/recipe/:url/:key/star', recipeRoutes.star);
-app.post('/recipe/:url/:key/unstar', recipeRoutes.unstar);
-app.post('/recipe/:url/:key/shop', recipeRoutes.shop);
-app.post('/recipe/:url/:key/noShop', recipeRoutes.noShop);
-app.get('/recipe/:url/:key', recipeRoutes.oneRecipe);
-
+// These routes return HTML (to be changed)
 app.get('/log/current', logRoutes.current);
 app.get('/log/:date', logRoutes.byDate);
 
-// our humble home page
+// Our humble home page (HTML)
 app.get('/', function(req, res) {
   logger.info('recipeRoutes.index');
   res.render('index')
 });
 
-app.get('*', siteRoutes.notFound);
+app.get('*', function(req, res) {
+  logger.error('Not found: ' + req.url);
+  res.status(404).render('index.ejs', { error: 'Page not found' });
+});
 
 
 // Fire up the web server! 
