@@ -17,7 +17,7 @@ var routesConfig = function($routeProvider) {
   }).
   when('/recipes/search', {
     controller: RecipeSearchController,
-    templateUrl: 'partials/recipeSearch.html'   
+    templateUrl: 'partials/recipeSearch.html'
   }).
   when('/recipes/new', {
     controller: RecipeEditController,
