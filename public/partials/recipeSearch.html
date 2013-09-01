@@ -1,15 +1,21 @@
 <h3>Search for recipes</h3>
-<form class="navbar-form navbar-right" 
+<form class="form-horizontal" role="form"
   ng-controller="RecipeSearchController">
 
-  <div class="form-group">
-    <input type="text" placeholder="enter something" class="form-control" ng-model="searchText">
+  <div class="input-group">
+    <input type="text" placeholder="enter something" 
+    class="form-control" ng-model="searchText">
+    
+    <span class="input-group-btn">
+      <button ng-click="search()" class="btn btn-success">Search</button>
+    </span>
   </div>
-  <button ng-click="search()" class="btn btn-success">Search</button>
 
-  <p ng-repeat="recipe in recipes">
-    <a ng-href="#/recipes/{{recipe.url}}/{{recipe.key}}">{{recipe.name}}</a>
-  </p>
+  <div> 
+    <p ng-repeat="recipe in recipes">
+      <a ng-href="#/recipes/{{recipe.url}}/{{recipe.key}}">{{recipe.name}}</a>
+    </p>
+  </div> 
 
   <p ng-bind="message"></p>
 
