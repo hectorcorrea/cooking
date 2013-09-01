@@ -263,6 +263,15 @@ var save = function(req, res) {
 };
 
 
+var touchAll = function(req, res) {
+  logger.info('recipeRoutes.touchAll');
+  var m = model.recipes(req.app.settings.config.dbUrl);
+  m.touchAll(function(err) {
+    res.send({done: 1});
+  });
+}
+
+
 var addNew = function(req, res) {
   
   logger.info('recipeRoutes.addNew');
@@ -297,5 +306,6 @@ module.exports = {
   noShop: noShop,
   edit: edit,
   save: save,
+  touchAll: touchAll,
   addNew: addNew
 }

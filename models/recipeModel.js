@@ -107,7 +107,6 @@ var getOne = function(key, decode, cb) {
   db.fetchOne(key, function(err, document) {
     if(decode) 
       document = decodeForEdit(document);
-    // console.log(document);
     cb(err, document);
   });
 
@@ -180,6 +179,30 @@ var removeFromShoppingList = function(key, cb) {
 };
 
 
+var touchAll = function(cb) {
+  console.log("model touch all");
+  getAll(function(err, docs) {
+
+    for(i=0; i<docs.length; i++) {
+
+      getOne(docs[i].key, true, function(err2, doc) {
+
+        updateOne(doc, function(err3, d) {
+          if(err) 
+            console.log(err3);
+          else
+            console.log("Touched " + d.key);
+        });
+
+      });
+
+    }
+
+    console.log("All documents have been queued for saving");
+    cb();
+  });
+}
+
 var publicApi = {
   getAll: getAll,
   getFavorites: getFavorites,
@@ -191,6 +214,7 @@ var publicApi = {
   starOne: starOne,
   addToShoppingList: addToShoppingList,
   removeFromShoppingList: removeFromShoppingList
+  touchAll: touchAll
 };
 
 

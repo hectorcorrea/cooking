@@ -83,7 +83,6 @@ var _fetchList = function(query, callback) {
     });
 
   });
-
 };
 
 
