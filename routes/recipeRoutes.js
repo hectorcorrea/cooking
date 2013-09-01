@@ -263,13 +263,13 @@ var save = function(req, res) {
 };
 
 
-var touchAll = function(req, res) {
-  logger.info('recipeRoutes.touchAll');
-  var m = model.recipes(req.app.settings.config.dbUrl);
-  m.touchAll(function(err) {
-    res.send({done: 1});
-  });
-}
+// var touchAll = function(req, res) {
+//   logger.info('recipeRoutes.touchAll');
+//   var m = model.recipes(req.app.settings.config.dbUrl);
+//   m.touchAll(function(err) {
+//     res.send({done: 1});
+//   });
+// }
 
 
 var addNew = function(req, res) {
@@ -306,6 +306,7 @@ module.exports = {
   noShop: noShop,
   edit: edit,
   save: save,
-  addNew: addNew,
-  touchAll: touchAll
+  addNew: addNew
+  //, 
+  //touchAll: touchAll
 }
