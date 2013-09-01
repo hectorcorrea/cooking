@@ -15,6 +15,10 @@ var routesConfig = function($routeProvider) {
     controller: ShoppingController,
     templateUrl: 'partials/recipeShopping.html'   
   }).
+  when('/recipes/search', {
+    controller: RecipeSearchController,
+    templateUrl: 'partials/recipeSearch.html'   
+  }).
   when('/recipes/new', {
     controller: RecipeEditController,
     templateUrl: 'partials/recipeEdit.html'   
@@ -190,6 +194,31 @@ function RecipeEditController($scope, $routeParams, $http, $location) {
     $scope.recipe = recipe;
     $scope.errorMsg = null;
   });
+
+}
+
+
+function RecipeSearchController($scope, $routeParams, $http, $location) {
+
+  $scope.recipes = [];
+  $scope.message = "";
+  
+  $scope.search = function() {
+    var serverUrl = "/recipes/search?text=" + $scope.searchText;
+    $http.get(serverUrl).
+    success(function(recipes) {
+      $scope.message = "";
+      $scope.recipes = recipes;
+      $scope.errorMsg = null;
+      if(recipes.length == 0) {
+        $scope.message = "No recipes were found"
+      }
+    }).
+    error(function(e) {
+      $scope.errorMsg = e.message + "/" + e.details;
+      console.log($scope.errorMsg);
+    });
+  }
 
 }
 
