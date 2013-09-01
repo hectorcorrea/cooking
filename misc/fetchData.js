@@ -1,8 +1,9 @@
 var MongoClient = require("mongodb").MongoClient;
 var fs = require("fs");
-var dbUrl = "mongodb://localhost:27017/cooking";
+var localUrl = "mongodb://localhost:27017/cooking";
 var joyentUrl = "<enter connection URL here>";
-dbUrl = joyentUrl;
+var azureUrl = "<enter connection URL here>";
+var sourceUrl = azureUrl;
 
 var options = {
   db: {},
@@ -15,7 +16,7 @@ var options = {
 };
 
 console.log("Connecting...");
-MongoClient.connect(dbUrl, options, function(err, db) {
+MongoClient.connect(sourceUrl, options, function(err, db) {
   
   if(err) {
     console.log("Could not connect");
