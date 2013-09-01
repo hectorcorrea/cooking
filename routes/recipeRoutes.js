@@ -306,6 +306,6 @@ module.exports = {
   noShop: noShop,
   edit: edit,
   save: save,
-  touchAll: touchAll,
-  addNew: addNew
+  addNew: addNew,
+  touchAll: touchAll
 }

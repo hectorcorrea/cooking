@@ -213,7 +213,7 @@ var publicApi = {
   updateOne: updateOne,
   starOne: starOne,
   addToShoppingList: addToShoppingList,
-  removeFromShoppingList: removeFromShoppingList
+  removeFromShoppingList: removeFromShoppingList,
   touchAll: touchAll
 };
 
