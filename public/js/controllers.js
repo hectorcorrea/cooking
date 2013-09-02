@@ -217,6 +217,16 @@ function RecipeSearchController($scope, $routeParams, $http, $location) {
       if(recipes.length == 0) {
         $scope.message = "No recipes were found"
       }
+      else {
+        // Give the focus to another element so that
+        // the keyboard presented by phones and tables
+        // disappears.
+        // This should probably go as an Angular Directive
+        // rather than manipulating the DOM here but
+        // we'll leave that for another day.
+        var btn = document.getElementById("btnSearch");
+        if(btn) btn.focus();
+      }
     }).
     error(function(e) {
       $scope.errorMsg = e.message + "/" + e.details;
