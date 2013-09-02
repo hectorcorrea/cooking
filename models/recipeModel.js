@@ -94,7 +94,7 @@ var search = function(text, cb) {
 
   db.setup(dbUrl);
   var cleanText = searchText(text);
-  db.search(text, function(err, documents) {
+  db.search(cleanText, function(err, documents) {
     cb(err, documents);
   });
   
