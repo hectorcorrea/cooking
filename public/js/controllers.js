@@ -7,6 +7,10 @@ var routesConfig = function($routeProvider) {
     controller: RecipeController,
     templateUrl: 'partials/recipeList.html'   
   }).
+  when('/', {
+    controller: RecipeSearchController,
+    templateUrl: 'partials/home.html'   
+  }).
   when('/recipes/favorites', {
     controller: FavsController,
     templateUrl: 'partials/recipeFavs.html'   
