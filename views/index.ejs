@@ -75,6 +75,12 @@
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.0.7/angular.min.js"></script>
     <script src="/js/controllers.js"></script>
   
+    <!-- Close the menu when clicking on any of the menu options -->
+    <script type="text/javascript">
+      $('.nav li a').on('click',function(){
+        $('.navbar-collapse').collapse('hide');
+      });
+    </script>
   </body>
 </html>
 
