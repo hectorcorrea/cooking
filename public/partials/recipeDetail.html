@@ -4,7 +4,7 @@
 </style>
 
 <div ng-controller="RecipeDetailController">
-  <h1>{{recipe.name}}</h1>
+  <h1 ng-bind-html-unsafe="recipe.name"></h1>
 
   <h2>
     <a id="star" ng-click="unstar()" ng-class="{true: 'shown', false: 'hidden'}[recipe.isStarred]"><span class="glyphicon glyphicon-star"></span></a>

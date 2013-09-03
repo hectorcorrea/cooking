@@ -59,6 +59,7 @@ var prepareForSave = function(data) {
 
 var decodeForEdit = function(data) {
   var encoder = new Encoder('entity');
+  data.name = decodeText(encoder, data.name);
   data.ingredients = decodeText(encoder, data.ingredients);
   data.directions = decodeText(encoder, data.directions);
   data.notes = decodeText(encoder, data.notes);
@@ -91,25 +92,22 @@ var getShopping = function(cb) {
 
 
 var search = function(text, cb) {
-
   db.setup(dbUrl);
   var cleanText = searchText(text);
   db.search(cleanText, function(err, documents) {
     cb(err, documents);
   });
-  
 };
 
 
 var getOne = function(key, decode, cb) {
-
   db.setup(dbUrl);
   db.fetchOne(key, function(err, document) {
-    if(decode) 
+    if(decode) {
       document = decodeForEdit(document);
+    }
     cb(err, document);
   });
-
 };
 
 

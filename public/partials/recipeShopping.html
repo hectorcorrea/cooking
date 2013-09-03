@@ -6,7 +6,7 @@
 
 <div ng-controller="ShoppingController">
   <p ng-repeat="recipe in recipes">
-    <a ng-href="#/recipes/{{recipe.url}}/{{recipe.key}}">{{recipe.name}}</a>
+    <a ng-bind-html-unsafe="recipe.name" ng-href="#/recipes/{{recipe.url}}/{{recipe.key}}"/>
   </p>
 </div>
 
