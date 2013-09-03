@@ -7,7 +7,11 @@
     class="form-control" ng-model="searchText">
     
     <span class="input-group-btn">
-      <button id="btnSearch" ng-click="search()" class="btn btn-success">Search</button>
+      <button id="btnSearch" 
+        ng-init="searchText = ''" 
+        ng-click="search()" 
+        ng-disabled="searchText.length == 0" 
+        class="btn btn-success">Search</button>
     </span>
   </div>
 
@@ -17,7 +21,8 @@
     </p>
   </div> 
 
-  <p ng-bind="message"></p>
+  <p></p>  
+  <div ng-show="message" ng-bind="message" class="alert alert-warning"/>
 
 </form>
 

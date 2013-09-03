@@ -29,7 +29,7 @@ var decodeText = function(encoder, text) {
 var searchText = function(text) {
   if (typeof(text) === 'string') {
     // http://stackoverflow.com/a/9364527/446681
-    return text.replace(/\W/g, ' ').toLowerCase();
+    return text.replace(/\W/g, ' ').toLowerCase().trim();
   }
   return '';
 };

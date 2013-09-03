@@ -86,9 +86,14 @@ var shopping = function(req, res) {
 var search = function(req, res) {
 
   var text = req.query.text;
-  if (typeof(text) != 'string') {
+  if((typeof(text) != 'string') || (text === 'undefined')) {
     logger.info('recipeRoutes.search (no text specified)');
-    return res.send({});
+    return res.send([]);
+  }
+
+  if(text.trim().length === 0) {
+    logger.info('recipeRoutes.search (empty text specified)');
+    return res.send([]);
   }
 
   logger.info('recipeRoutes.search (' + text + ')');
