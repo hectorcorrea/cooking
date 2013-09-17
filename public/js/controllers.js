@@ -1,6 +1,41 @@
-// http://docs.angularjs.org/tutorial/step_07
-var cookingModule = angular.module('cookingModule', []);
+var services = angular.module('cooking.services', ['ngResource']);
 
+services.factory('Recipe', ['$resource', 
+  function($resource) {
+    return $resource('/recipes/:url/:key.json', {key: '@key', url: '@url'});
+  }
+]);
+
+
+services.factory('SingleRecipe', ['Recipe', '$route', '$q',
+  function(Recipe, $route, $q) {
+    return function() {
+
+      var delay = $q.defer();
+      var query = {
+        url: $route.current.params.url,
+        key: $route.current.params.key
+      };
+      Recipe.get(query, function(recipe) {
+
+        var serverUrl = "/recipes/" + recipe.url + "/" + recipe.key;
+        recipe.baseUrl = serverUrl;
+        recipe.editUrl = serverUrl + "/edit";
+        recipe.starUrl = serverUrl + "/star";
+        recipe.unstarUrl = serverUrl + "/unstar";
+        delay.resolve(recipe);
+
+      }, function() {
+
+        delay.reject('Unable to fetch recipe ' + query.key);
+
+      });
+      return delay.promise;
+    }
+}]);
+
+
+var cookingApp = angular.module('cookingApp', ['cooking.services']);
 
 var routesConfig = function($routeProvider) {
   $routeProvider.
@@ -34,6 +69,9 @@ var routesConfig = function($routeProvider) {
   }).
   when('/recipes/:url/:key', {
     controller: 'RecipeDetailController',
+    resolve: {
+      recipe: function(SingleRecipe) { return SingleRecipe(); }
+    },
     templateUrl: 'partials/recipeDetail.html' 
   }).
   when('/credits', {
@@ -46,10 +84,10 @@ var routesConfig = function($routeProvider) {
   });
 }
 
-cookingModule.config(routesConfig);
+cookingApp.config(routesConfig);
 
 
-cookingModule.controller('RecipeController', ['$scope', '$http', '$location', 
+cookingApp.controller('RecipeController', ['$scope', '$http', '$location', 
   function($scope, $http, $location) {
 
     $http.get("/recipes/all").
@@ -81,7 +119,7 @@ cookingModule.controller('RecipeController', ['$scope', '$http', '$location',
 // Merge this code with RecipeController, 
 // perhaps by moving common functionality to 
 // Angular services
-cookingModule.controller('FavsController', ['$scope', '$http', '$location', 
+cookingApp.controller('FavsController', ['$scope', '$http', '$location', 
   function($scope, $http, $location) {
 
     $http.get("/recipes/favorites").
@@ -110,7 +148,7 @@ cookingModule.controller('FavsController', ['$scope', '$http', '$location',
 ]);
 
 
-cookingModule.controller('ShoppingController', ['$scope', '$http', '$location', 
+cookingApp.controller('ShoppingController', ['$scope', '$http', '$location', 
   function($scope, $http, $location) {
 
     $http.get("/recipes/shopping").
@@ -139,41 +177,34 @@ cookingModule.controller('ShoppingController', ['$scope', '$http', '$location',
 ]);
 
 
-cookingModule.controller('RecipeDetailController', ['$scope', '$routeParams', '$http', '$location', 
-  function($scope, $routeParams, $http, $location) {
+cookingApp.controller('RecipeDetailController', ['$scope', '$http', '$location', 'recipe',
+  function($scope, $http, $location, recipe) {
 
-    var serverUrl = "/recipes/" + $routeParams.url + "/"+ $routeParams.key;
-    $http.get(serverUrl).success(function(recipe) {
-      var clientUrl = "/recipes/" + recipe.url + "/" + recipe.key;
-      recipe.editUrl = clientUrl + "/edit";
-      recipe.starUrl = clientUrl + "/star";
-      recipe.unstarUrl = clientUrl + "/unstar";
-      $scope.recipe = recipe;
-    });
+    $scope.recipe = recipe;
 
     $scope.star = function(){
-      var starUrl = serverUrl + "/star" ;
+      var starUrl = $scope.recipe.baseUrl + "/star" ;
       $http.post(starUrl).success(function(data) {
         $scope.recipe.isStarred = data.starred;
       });
     }
 
     $scope.unstar = function(){
-      var unstarUrl = serverUrl + "/unstar" ;
+      var unstarUrl = $scope.recipe.baseUrl + "/unstar" ;
       $http.post(unstarUrl).success(function(data) {
         $scope.recipe.isStarred = data.starred;
       });
     }
 
     $scope.shop = function(){
-      var shopUrl = serverUrl + "/shop" ;
+      var shopUrl = $scope.recipe.baseUrl + "/shop" ;
       $http.post(shopUrl).success(function(data) {
         $scope.recipe.isShoppingList = data.shop;
       });
     }
 
     $scope.noshop = function(){
-      var noShopUrl = serverUrl + "/noshop" ;
+      var noShopUrl = $scope.recipe.baseUrl + "/noshop" ;
       $http.post(noShopUrl).success(function(data) {
         $scope.recipe.isShoppingList = data.shop;
       });
@@ -187,7 +218,7 @@ cookingModule.controller('RecipeDetailController', ['$scope', '$routeParams', '$
 ]);
 
 
-cookingModule.controller('RecipeEditController', ['$scope', '$routeParams', '$http', '$location', 
+cookingApp.controller('RecipeEditController', ['$scope', '$routeParams', '$http', '$location', 
   function($scope, $routeParams, $http, $location) {
 
     $scope.submit = function() {
@@ -213,7 +244,7 @@ cookingModule.controller('RecipeEditController', ['$scope', '$routeParams', '$ht
 ]);
 
 
-cookingModule.controller('RecipeSearchController', ['$scope', '$routeParams', '$http', '$location', 
+cookingApp.controller('RecipeSearchController', ['$scope', '$routeParams', '$http', '$location', 
   function($scope, $routeParams, $http, $location) {
 
     $scope.recipes = [];
@@ -250,7 +281,7 @@ cookingModule.controller('RecipeSearchController', ['$scope', '$routeParams', '$
 ]);
 
 
-cookingModule.controller('EmptyController', ['$scope',
+cookingApp.controller('EmptyController', ['$scope',
   function ($scope) {
   }
 ]);
