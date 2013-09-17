@@ -16,6 +16,7 @@ services.factory('SingleRecipe', ['Recipe', '$route', '$q',
         url: $route.current.params.url,
         key: $route.current.params.key
       };
+
       Recipe.get(query, function(recipe) {
 
         var serverUrl = "/recipes/" + recipe.url + "/" + recipe.key;
@@ -30,6 +31,7 @@ services.factory('SingleRecipe', ['Recipe', '$route', '$q',
         delay.reject('Unable to fetch recipe ' + query.key);
 
       });
+      
       return delay.promise;
     }
 }]);
@@ -65,6 +67,9 @@ var routesConfig = function($routeProvider) {
   }).
   when('/recipes/:url/:key/edit', {
     controller: 'RecipeEditController',
+    resolve: {
+      recipe: function(SingleRecipe) { return SingleRecipe(); }
+    },
     templateUrl: 'partials/recipeEdit.html' 
   }).
   when('/recipes/:url/:key', {
@@ -218,11 +223,13 @@ cookingApp.controller('RecipeDetailController', ['$scope', '$http', '$location',
 ]);
 
 
-cookingApp.controller('RecipeEditController', ['$scope', '$routeParams', '$http', '$location', 
-  function($scope, $routeParams, $http, $location) {
+cookingApp.controller('RecipeEditController', ['$scope', '$http', '$location', 'recipe', 
+  function($scope, $http, $location, recipe) {
+
+    var saveUrl = "/recipes/save/" + recipe.key;
+    $scope.recipe = recipe;
 
     $scope.submit = function() {
-      var saveUrl = "/recipes/save/" + $routeParams.key;
       $http.post(saveUrl, $scope.recipe).
       success(function(x) {
         var viewUrl = "/recipes/" + x.url + "/"+ x.key;
@@ -233,12 +240,12 @@ cookingApp.controller('RecipeEditController', ['$scope', '$routeParams', '$http'
       }); 
     }
 
-    var serverUrl = "/recipes/" + $routeParams.url + "/"+ $routeParams.key + "/edit";
-    $http.get(serverUrl).success(function(recipe) {
-      recipe.saveUrl = "/recipes/save/" + recipe.key;
-      $scope.recipe = recipe;
-      $scope.errorMsg = null;
-    });
+    // var serverUrl = "/recipes/" + $routeParams.url + "/"+ $routeParams.key + "/edit";
+    // $http.get(serverUrl).success(function(recipe) {
+    //   recipe.saveUrl = "/recipes/save/" + recipe.key;
+    //   $scope.recipe = recipe;
+    //   $scope.errorMsg = null;
+    // });
 
   }
 ]);
