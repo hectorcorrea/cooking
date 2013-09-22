@@ -30,7 +30,7 @@ Download the source code and install the requirements listed above.
 
 To kick off the application, just run the following command from the Terminal window: 
 
-    node app 
+    node server 
 
 ...and browse to your *http://localhost:3000* You should see the web site. Enjoy it!
 
@@ -39,14 +39,14 @@ Structure of the source code
 ----------------------------
 Server Side: 
 
-* **app.js** is the main file. This file mainly setups the environment.
+* **server.js** is the main file. This file mainly setups the environment.
 * **\models:** JavaScript files with the server-side models and database access code. 
 * **\routes\recipeRoutes.js:** is the server-side controller. This code is the one that parses requests, contacts the database, and returns the data to the client. All data is returned in JSON.
 * **\views\index.ejs:** This is the only server-side view. It's basically a template on which different partial views will be injected client-side by Angular.js
 
 Client Side:
 
-* **\public\js\controller.js:** This file configures Angular.js to handle each route, switch views, and process the data coming from the server. 
+* **\public\js\app.js:** This file configures Angular.js to handle each route, switch views, and process the data coming from the server. 
 * **\public\partials:** These are the views that Angular.js uses to display data.
 
 
