@@ -84,15 +84,21 @@ app.get('/recipes/shopping', recipeRoutes.shopping);
 app.get('/recipes/search', recipeRoutes.search);
 //app.get('/recipes/touchAll', recipeRoutes.touchAll);
 
-app.get('/recipes/:url/:key/edit', recipeRoutes.edit);
-app.post('/recipes/save/:key', recipeRoutes.save);
+app.post('/recipes/:url/:key', recipeRoutes.save);
 app.post('/recipes/new', recipeRoutes.addNew);
-
 app.post('/recipes/:url/:key/star', recipeRoutes.star);
 app.post('/recipes/:url/:key/unstar', recipeRoutes.unstar);
 app.post('/recipes/:url/:key/shop', recipeRoutes.shop);
 app.post('/recipes/:url/:key/noShop', recipeRoutes.noShop);
-app.get('/recipes/:url/:key', recipeRoutes.oneRecipe);
+
+// These two routes are identical except that for 
+// "edit" we decode "<br>"" into "\r\n"
+// Ideally they should not be two different routes.
+// What would be better way of handling it? Use a "decode" 
+// option in the query string? Not handle it on the server
+// and leave it to the client?
+// app.get('/recipes/:url/:key/edit', recipeRoutes.edit);
+app.get('/recipes/:url/:key', recipeRoutes.view);
 
 // These routes return HTML (to be changed)
 app.get('/log/current', logRoutes.current);

@@ -1,15 +1,53 @@
+// ========================================================
+// Services
+// ========================================================
 var services = angular.module('cooking.services', ['ngResource']);
 
 services.factory('Recipe', ['$resource', 
   function($resource) {
-    return $resource('/recipes/:url/:key.json', {key: '@key', url: '@url'});
+    var url = '/recipes/:url/:key';
+    var params = {key: '@key', url: '@url'};
+    
+    var methods = {};
+
+    methods.query = {
+      method:'GET', 
+      params:{url:'search', key:'', text:''}, 
+      isArray:true
+    };
+    
+    methods.all = {
+      method:'GET', 
+      params:{url:'all', key:''}, 
+      isArray:true
+    };
+
+    methods.favorites = {
+      method:'GET', 
+      params:{url:'favorites', key:''}, 
+      isArray:true
+    };
+
+    methods.shoppingList = {
+      method:'GET', 
+      params:{url:'shopping', key:''}, 
+      isArray:true
+    };
+
+    methods.createNew = {
+      method:'POST', 
+      params:{url:'new'}, 
+      isArray:false
+    };
+
+    return $resource(url, params, methods);
   }
 ]);
 
 
 services.factory('SingleRecipe', ['Recipe', '$route', '$q',
   function(Recipe, $route, $q) {
-    return function() {
+    return function(decode) {
 
       var delay = $q.defer();
       var query = {
@@ -17,74 +55,128 @@ services.factory('SingleRecipe', ['Recipe', '$route', '$q',
         key: $route.current.params.key
       };
 
-      Recipe.get(query, function(recipe) {
+      if(decode) {
+        query.decode = true;
+      }
 
+      var ok = function(recipe) {
         var serverUrl = "/recipes/" + recipe.url + "/" + recipe.key;
         recipe.baseUrl = serverUrl;
         recipe.editUrl = serverUrl + "/edit";
         recipe.starUrl = serverUrl + "/star";
         recipe.unstarUrl = serverUrl + "/unstar";
         delay.resolve(recipe);
+      };
 
-      }, function() {
-
+      var error = function() {
         delay.reject('Unable to fetch recipe ' + query.key);
+      };
 
-      });
-      
+      Recipe.get(query, ok, error);
       return delay.promise;
     }
-}]);
+  }
+]);
 
+
+services.factory('SearchRecipes', ['Recipe', '$route', '$q',
+  function(Recipe, $route, $q) {
+    return function(text) {
+      
+      var delay = $q.defer();
+
+      if (!text) {
+        delay.resolve([]);
+        return delay.promise;
+      } 
+
+      var query = {text: text};
+      var ok = function(recipes) { delay.resolve(recipes); };
+      var error = function() { delay.reject('Unable to fetch recipes'); }; 
+      Recipe.query(query, ok, error);
+      return delay.promise;
+
+    }
+  }
+]);
+
+
+services.factory('ListRecipes', ['Recipe', '$route', '$q',
+  function(Recipe, $route, $q) {
+    return function(listType) {
+
+      var delay = $q.defer();
+      var ok = function(recipes) { delay.resolve(recipes); };
+      var error = function() { delay.reject('Unable to fetch recipes'); };
+      Recipe[listType](ok, error);
+      return delay.promise;
+
+    }
+  }
+]);
+
+
+// ========================================================
+// App Definition
+// ========================================================
 
 var cookingApp = angular.module('cookingApp', ['cooking.services']);
 
 var routesConfig = function($routeProvider) {
   $routeProvider.
-  when('/recipes', {
-    controller: 'RecipeController',
-    templateUrl: 'partials/recipeList.html'   
-  }).
   when('/', {
     controller: 'RecipeSearchController',
+    resolve: {
+      recipes: function(SearchRecipes) { return SearchRecipes(); }
+    },
     templateUrl: 'partials/home.html'   
   }).
-  when('/recipes/favorites', {
-    controller: 'FavsController',
-    templateUrl: 'partials/recipeFavs.html'   
-  }).
-  when('/recipes/shopping', {
-    controller: 'ShoppingController',
-    templateUrl: 'partials/recipeShopping.html'   
+  when('/recipes', {
+    controller: 'RecipeListController',
+    resolve: {
+      recipes: function(ListRecipes) { return ListRecipes('all'); }
+    },
+    templateUrl: 'partials/recipeList.html'   
   }).
   when('/recipes/search', {
     controller: 'RecipeSearchController',
+    resolve: {
+      recipes: function(SearchRecipes) { return SearchRecipes(); }
+    },
     templateUrl: 'partials/recipeSearch.html'
   }).
-  when('/recipes/new', {
-    controller: 'RecipeEditController',
-    templateUrl: 'partials/recipeEdit.html'   
+  when('/recipes/favorites', {
+    controller: 'RecipeListController',
+    resolve: {
+      recipes: function(ListRecipes) { return ListRecipes('favorites'); }
+    },
+    templateUrl: 'partials/recipeFavs.html'   
+  }).
+  when('/recipes/shopping', {
+    controller: 'RecipeListController',
+    resolve: {
+      recipes: function(ListRecipes) { return ListRecipes('shoppingList'); }
+    },
+    templateUrl: 'partials/recipeShopping.html'   
   }).
   when('/recipes/:url/:key/edit', {
     controller: 'RecipeEditController',
     resolve: {
-      recipe: function(SingleRecipe) { return SingleRecipe(); }
+      recipe: function(SingleRecipe) { return SingleRecipe(true); }
     },
     templateUrl: 'partials/recipeEdit.html' 
   }).
   when('/recipes/:url/:key', {
     controller: 'RecipeDetailController',
     resolve: {
-      recipe: function(SingleRecipe) { return SingleRecipe(); }
+      recipe: function(SingleRecipe) { return SingleRecipe(false); }
     },
     templateUrl: 'partials/recipeDetail.html' 
   }).
   when('/credits', {
-    controller: 'EmptyController',
     templateUrl: 'partials/credits.html' 
   }).
   otherwise({
-    controller: 'EmptyController',
     templateUrl: 'partials/notFound.html' 
   });
 }
@@ -92,90 +184,27 @@ var routesConfig = function($routeProvider) {
 cookingApp.config(routesConfig);
 
 
-cookingApp.controller('RecipeController', ['$scope', '$http', '$location', 
-  function($scope, $http, $location) {
+// ========================================================
+// Controllers
+// ========================================================
 
-    $http.get("/recipes/all").
-    success(function(recipes) {
-      $scope.recipes = recipes;
-      $scope.errorMsg = null;
-    }).
-    error(function(e) {
-      $scope.errorMsg = e.message + "/" + e.details;
-      console.log($scope.errorMsg);
-    });
+cookingApp.controller('RecipeListController', ['$scope', '$location', 'Recipe', 'recipes', 
+  function($scope, $location, Recipe, recipes) {
+
+    $scope.recipes = recipes;
 
     $scope.new = function() {
-      $http.post("/recipes/new").
-      success(function(recipe) {
-        var editUrl = "/recipes/" + recipe.url + "/" + recipe.key + "/edit";
-        $location.url(editUrl);
-      }).
-      error(function(e) {
-        $scope.errorMsg = e.message + "/" + e.details;
-        console.log($scope.errorMsg);
-      });
-    }
 
-  }
-]);
+      Recipe.createNew(
+        function(recipe) {
+          var editUrl = "/recipes/" + recipe.url + "/" + recipe.key + "/edit";
+          $location.url(editUrl);
+        },
+        function(e) {
+          $scope.errorMsg = e.data.message;
+        }
+      );
 
-
-// Merge this code with RecipeController, 
-// perhaps by moving common functionality to 
-// Angular services
-cookingApp.controller('FavsController', ['$scope', '$http', '$location', 
-  function($scope, $http, $location) {
-
-    $http.get("/recipes/favorites").
-    success(function(recipes) {
-      $scope.recipes = recipes;
-      $scope.errorMsg = null;
-    }).
-    error(function(e) {
-      $scope.errorMsg = e.message + "/" + e.details;
-      console.log($scope.errorMsg);
-    });
-
-    $scope.new = function() {
-      $http.post("/recipes/new").
-      success(function(recipe) {
-        var editUrl = "/recipes/" + recipe.url + "/" + recipe.key + "/edit";
-        $location.url(editUrl);
-      }).
-      error(function(e) {
-        $scope.errorMsg = e.message + "/" + e.details;
-        console.log($scope.errorMsg);
-      });
-    }
-
-  }
-]);
-
-
-cookingApp.controller('ShoppingController', ['$scope', '$http', '$location', 
-  function($scope, $http, $location) {
-
-    $http.get("/recipes/shopping").
-    success(function(recipes) {
-      $scope.recipes = recipes;
-      $scope.errorMsg = null;
-    }).
-    error(function(e) {
-      $scope.errorMsg = e.message + "/" + e.details;
-      console.log($scope.errorMsg);
-    });
-
-    $scope.new = function() {
-      $http.post("/recipes/new").
-      success(function(recipe) {
-        var editUrl = "/recipes/" + recipe.url + "/" + recipe.key + "/edit";
-        $location.url(editUrl);
-      }).
-      error(function(e) {
-        $scope.errorMsg = e.message + "/" + e.details;
-        console.log($scope.errorMsg);
-      });
     }
 
   }
@@ -187,6 +216,8 @@ cookingApp.controller('RecipeDetailController', ['$scope', '$http', '$location',
 
     $scope.recipe = recipe;
 
+    // I should eventually convert these actions (start/unstar/shop/noshop)
+    // into actions in the Recipe service. 
     $scope.star = function(){
       var starUrl = $scope.recipe.baseUrl + "/star" ;
       $http.post(starUrl).success(function(data) {
@@ -223,73 +254,72 @@ cookingApp.controller('RecipeDetailController', ['$scope', '$http', '$location',
 ]);
 
 
-cookingApp.controller('RecipeEditController', ['$scope', '$http', '$location', 'recipe', 
-  function($scope, $http, $location, recipe) {
+cookingApp.controller('RecipeEditController', ['$scope', '$location', 'Recipe', 'recipe', 
+  function($scope, $location, Recipe, recipe) {
 
-    var saveUrl = "/recipes/save/" + recipe.key;
     $scope.recipe = recipe;
 
     $scope.submit = function() {
-      $http.post(saveUrl, $scope.recipe).
-      success(function(x) {
-        var viewUrl = "/recipes/" + x.url + "/"+ x.key;
-        $location.url(viewUrl);
-      }).
-      error(function(e) {
-        $scope.errorMsg = e.message;
-      }); 
-    }
 
-    // var serverUrl = "/recipes/" + $routeParams.url + "/"+ $routeParams.key + "/edit";
-    // $http.get(serverUrl).success(function(recipe) {
-    //   recipe.saveUrl = "/recipes/save/" + recipe.key;
-    //   $scope.recipe = recipe;
-    //   $scope.errorMsg = null;
-    // });
+      var recipe = new Recipe($scope.recipe);
+      recipe.$save(
+        function(r) {
+          var viewUrl = "/recipes/" + r.url + "/"+ r.key;
+          $location.url(viewUrl);
+        },
+        function(e) {
+          $scope.errorMsg = e.data.message;
+        }
+      );
+
+    }
 
   }
 ]);
 
 
-cookingApp.controller('RecipeSearchController', ['$scope', '$routeParams', '$http', '$location', 
-  function($scope, $routeParams, $http, $location) {
+cookingApp.controller('RecipeSearchController', ['$scope', '$routeParams', 'Recipe', 'recipes',
+  function($scope, $routeParams, Recipe, recipes) {
 
-    $scope.recipes = [];
+    $scope.recipes = recipes;
     $scope.message = "";
+    $scope.errorMsg = null;
     
     $scope.search = function() {
-      var serverUrl = "/recipes/search?text=" + $scope.searchText;
-      $http.get(serverUrl).
-      success(function(recipes) {
-        $scope.message = "";
-        $scope.recipes = recipes;
-        $scope.errorMsg = null;
-        if(recipes.length == 0) {
-          $scope.message = "No recipes were found"
+
+      Recipe.query(
+        {text: $scope.searchText}, 
+        function(recipes) {
+
+          $scope.message = "";
+          $scope.recipes = recipes;
+          $scope.errorMsg = null;
+          if(recipes.length == 0) {
+            $scope.message = "No recipes were found"
+          }
+          else {
+            // Give the focus to another element so that
+            // the keyboard presented by phones and tables
+            // disappears.
+            // This should probably go as an Angular Directive
+            // rather than manipulating the DOM here but
+            // we'll leave that for another day.
+            var btn = document.getElementById("btnSearch");
+            if(btn) btn.focus();
+          }
+
+        }, 
+        function(e) {
+
+          $scope.errorMsg = e.message + "/" + e.details;
+          console.log($scope.errorMsg);
+
         }
-        else {
-          // Give the focus to another element so that
-          // the keyboard presented by phones and tables
-          // disappears.
-          // This should probably go as an Angular Directive
-          // rather than manipulating the DOM here but
-          // we'll leave that for another day.
-          var btn = document.getElementById("btnSearch");
-          if(btn) btn.focus();
-        }
-      }).
-      error(function(e) {
-        $scope.errorMsg = e.message + "/" + e.details;
-        console.log($scope.errorMsg);
-      });
+      );
+
     }
 
   }
 ]);
 
-
-cookingApp.controller('EmptyController', ['$scope',
-  function ($scope) {
-  }
-]);
 

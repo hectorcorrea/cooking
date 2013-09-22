@@ -1,6 +1,6 @@
 {
   "name": "cooking",
-  "main": "app.js",
+  "main": "server.js",
   "version": "0.0.1",
   "engines": {
     "node": "v0.8.x"
