@@ -1,27 +1,7 @@
-<h3>Search for recipes</h3>
-<form class="form-horizontal" role="form">
+I am currently not using this view. 
+Currently the home page and the search 
+page are the same. 
 
-  <div class="input-group">
-    <input type="text" placeholder="enter something" 
-    class="form-control" ng-model="searchText">
-    
-    <span class="input-group-btn">
-      <button id="btnSearch" 
-        ng-init="searchText = ''" 
-        ng-click="search()" 
-        ng-disabled="searchText.length == 0" 
-        class="btn btn-success">Search</button>
-    </span>
-  </div>
-
-  <div> 
-    <p ng-repeat="recipe in recipes">
-      <a ng-bind-html-unsafe="recipe.name" ng-href="#/recipes/{{recipe.url}}/{{recipe.key}}"/>
-    </p>
-  </div> 
-
-  <p></p>  
-  <div ng-show="message" ng-bind="message" class="alert alert-warning"/>
-
-</form>
-
+If in the future the home page goes in a
+different direction then I'll need two 
+individual views, but not now.

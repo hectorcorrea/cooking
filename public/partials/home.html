@@ -2,12 +2,10 @@
 <form class="form-horizontal" role="form">
 
   <div class="input-group">
-    <input type="text" placeholder="enter something" 
-    class="form-control" ng-model="searchText">
+    <input type="text" ng-model="searchText" class="form-control" placeholder="enter something">
     
     <span class="input-group-btn">
       <button id="btnSearch"
-        ng-init="searchText = ''" 
         ng-click="search()" 
         ng-disabled="searchText.length == 0" 
         class="btn btn-success">Search</button>
