@@ -1,24 +1,13 @@
 var fs = require('fs');
 
+exports.loadSync = function(fileName) {
 
-var readSettings = function(fileName) {
-
-  if (!fs.existsSync(fileName)) {
-    throw "Settings file [" + fileName + "] was not found. " + 
-      "Current directory [" + __dirname + "].";
+  if(!fs.existsSync(fileName)) {
+    text = "{}";
   }
-  
-  text = fs.readFileSync(fileName, 'utf8');
+  else {
+    text = fs.readFileSync(fileName, 'utf8');
+  }
+
   return JSON.parse(text);
-}
-
-
-var loadSettings = function(fileName) {
-  settings = readSettings(fileName); 
-  return settings
-}
-
-
-module.exports = {
-  load: loadSettings
 }

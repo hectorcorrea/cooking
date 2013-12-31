@@ -1,25 +1,37 @@
 var logger = require('log-hanging-fruit').defaultLogger;
-var mongoConnect = require("./mongoConnect");
+var mongoConnect = require('mongoconnect');
 
-var init = function(dbConnString) {
+exports.init = function(dbConnString) {
 
-  mongoConnect.setup(dbConnString);
+  mongoConnect.setup(dbConnString, null, true);
+  
   mongoConnect.execute(function(err, db) {
 
     if(err) {
-      logger.error("Could not perform DB initialization tasks. Error: " + err);
+      logger.error('Could not perform DB initialization tasks. Error: ' + err);
       return;
     }
 
-    logger.info("Validating index by name...");
-    db.collection("recipes").ensureIndex({sortName:1}, function(err,ix) {
+    logger.info('Validating index by key...');
+    db.collection('recipes').ensureIndex({key:1}, function(err,ix) {
 
       if(err) {
-        logger.error("Error creating index: " + err);
+        logger.error('Error creating index by key: ' + err);
         return;
       }
 
-      logger.info("...done validating index by name.");
+      logger.info('...done validating index by key.');
+    });
+
+    logger.info('Validating index by postedOn...');
+    db.collection('recipes').ensureIndex({postedOn:-1}, function(err,ix) {
+
+      if(err) {
+        logger.error('Error creating index by postedOn: ' + err);
+        return;
+      }
+
+      logger.info('...done validating index by postedOn.');
     });
 
   }); 
@@ -27,6 +39,3 @@ var init = function(dbConnString) {
 };
 
 
-module.exports = {
-  init: init
-}
