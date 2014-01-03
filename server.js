@@ -37,8 +37,15 @@ app.get('/log/:date', logRoutes.byDate);
 // Our humble home page (HTML)
 app.get('/', function(req, res) {
   logger.info('home page for ' + req.url);
-  console.log(req.headers.host);
-  res.render('index', {hostHeader: req.headers.host});
+  
+  // Temporary code while we migrate out of Azure.
+  var host = req.headers.host || "";
+  var isAzure = host.toLowerCase().indexOf("azure") >= 0;
+  if(isAzure) {
+    return res.render('legacy'); 
+  }
+
+  res.render('index');
 });
 
 app.get('*', function(req, res) {
