@@ -1,0 +1,8 @@
+* add recipe's ingredientes to shopping list
+* cross ingredients from shopping list
+* clear shopping list
+  Should shopping be client side? No because we want it accross devices.
+* login process
+* add owner to recipes
+* allow to add a picture
+
