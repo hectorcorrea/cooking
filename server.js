@@ -37,7 +37,8 @@ app.get('/log/:date', logRoutes.byDate);
 // Our humble home page (HTML)
 app.get('/', function(req, res) {
   logger.info('home page for ' + req.url);
-  res.render('index')
+  console.log(req.headers.host);
+  res.render('index', {hostHeader: req.headers.host});
 });
 
 app.get('*', function(req, res) {
