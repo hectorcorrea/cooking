@@ -1,6 +1,6 @@
 var logger = require('log-hanging-fruit').defaultLogger;
 var dbCollection = "recipes";
-var mongoConnect = require("mongoConnect");
+var mongoConnect = require("mongoconnect");
 
 
 var setup = function(dbConnString) {
