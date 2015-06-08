@@ -68,7 +68,6 @@ var decodeForEdit = function(data) {
 
 
 var getAll = function(cb) {
-  db.setup(dbUrl);
   db.fetchAll(function(err, documents) {
     cb(err, documents);
   });
@@ -76,7 +75,6 @@ var getAll = function(cb) {
 
 
 var getFavorites = function(cb) {
-  db.setup(dbUrl);
   db.fetchFavorites(function(err, documents) {
     cb(err, documents);
   });
@@ -84,7 +82,6 @@ var getFavorites = function(cb) {
 
 
 var getShopping = function(cb) {
-  db.setup(dbUrl);
   db.fetchShopping(function(err, documents) {
     cb(err, documents);
   });
@@ -92,7 +89,6 @@ var getShopping = function(cb) {
 
 
 var search = function(text, cb) {
-  db.setup(dbUrl);
   var cleanText = searchText(text);
   db.search(cleanText, function(err, documents) {
     cb(err, documents);
@@ -101,7 +97,6 @@ var search = function(text, cb) {
 
 
 var getOne = function(key, decode, cb) {
-  db.setup(dbUrl);
   db.fetchOne(key, function(err, document) {
     if(decode) {
       document = decodeForEdit(document);
@@ -113,7 +108,6 @@ var getOne = function(key, decode, cb) {
 
 var addNew = function(cb) {
 
-  db.setup(dbUrl);
   db.getNewId(function(err, id) {
 
     if(err) return cb(err);
@@ -138,7 +132,6 @@ var addNew = function(cb) {
 
 var updateOne = function(data, cb) {
 
-  db.setup(dbUrl);
   data = prepareForSave(data);
   db.updateOne(data, function(err, savedDoc) {
     if (err) return cb(err);
@@ -150,7 +143,6 @@ var updateOne = function(data, cb) {
 
 var starOne = function(key, starred, cb) {
 
-  db.setup(dbUrl);
   db.starOne(key, starred, function(err) {
     if (err) return cb(err);
     cb(null);
@@ -160,7 +152,6 @@ var starOne = function(key, starred, cb) {
 
 
 var addToShoppingList = function(key, cb) {
-  db.setup(dbUrl);
   db.addToShoppingList(key, function(err) {
     if (err) return cb(err);
     cb(null);
@@ -169,7 +160,6 @@ var addToShoppingList = function(key, cb) {
 
 
 var removeFromShoppingList = function(key, cb) {
-  db.setup(dbUrl);
   db.removeFromShoppingList(key, function(err) {
     if (err) return cb(err);
     cb(null);

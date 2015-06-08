@@ -3,11 +3,6 @@ var dbCollection = "recipes";
 var mongoConnect = require("mongoconnect");
 
 
-var setup = function(dbConnString) {
-//  mongoConnect.setup(dbConnString);
-};
-
-
 var getNewId = function(callback) {
 
   mongoConnect.execute(function(err, db) {
@@ -26,7 +21,7 @@ var getNewId = function(callback) {
         return;
       }      
 
-      var id = doc.next;
+      var id = doc.value.next;
       callback(null, id);
     });
 
@@ -133,9 +128,10 @@ var updateOne = function(data, callback) {
       data._id = item._id;
 
       var collection = db.collection(dbCollection);
-      collection.save(data, function(err, savedCount){
+      collection.save(data, function(err, mongoResult){
 
         if(err) return callback(err);
+        savedCount = mongoResult.result.nModified
         if(savedCount == 0) return callback("No document was updated");
         if(savedCount > 1) return callback("More than one document was updated");
 
@@ -162,8 +158,9 @@ var starOne = function(key, starred, callback) {
     var query = {key: key};
     var field = {'$set': {'isStarred': starred}};
     var collection = db.collection(dbCollection);
-    collection.update(query, field, function(err, count) {
+    collection.update(query, field, function(err, mongoResult) {
       if(err) return callback(err);
+      count = mongoResult.result.nModified
       if(count === 0) return callback("No records were starred");
       if(count > 1) return callback("More than one record was starred");
       callback(null);
@@ -193,8 +190,9 @@ var _updateShoppingList = function(key, isAddToList, callback) {
     var query = {key: key};
     var field = {'$set': {'isShoppingList': isAddToList}};
     var collection = db.collection(dbCollection);
-    collection.update(query, field, function(err, count) {
+    collection.update(query, field, function(err, mongoResult) {
       if(err) return callback(err);
+      count = mongoResult.result.nModified
       if(count === 0) return callback("No records were marked for ShoppingList");
       if(count > 1) return callback("More than one record was for ShoppingList");
       callback(null);
@@ -215,10 +213,11 @@ var addOne = function(data, callback) {
       if(item !== null) return callback("An item with the same key already exists [" + data.key + "]");
 
       var collection = db.collection(dbCollection);
-      collection.save(data, function(err, savedCount){
+      collection.save(data, function(err, mongoResult){
 
         if(err) return callback(err);
-        callback(null, savedCount);
+        newRecord = mongoResult.ops[0]
+        callback(null, newRecord);
 
       });
 
@@ -230,7 +229,6 @@ var addOne = function(data, callback) {
 
 
 module.exports = {
-  setup: setup,
   fetchAll: fetchAll,
   fetchFavorites: fetchFavorites,
   fetchShopping: fetchShopping,
