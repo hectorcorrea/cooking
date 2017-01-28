@@ -10,9 +10,9 @@ import (
 type LegacyRecipe struct {
 	Key         int    `json:"key"`
 	Name        string `json:"name"`
-	Ingredients string `json:"name"`
-	Directions  string `json:"name"`
-	Notes       string `json:"name"`
+	Ingredients string `json:"ingredients"`
+	Directions  string `json:"directions"`
+	Notes       string `json:"notes"`
 	Starred     bool   `json:"isStarred"`
 	Shopping    bool   `json:"isShoppingList"`
 }
@@ -49,12 +49,4 @@ func ImportOne(fileName string) error {
 		log.Printf("ERROR: %s", err)
 	}
 	return err
-}
-
-// Converts a date in Z format (yyyy-MM-ddTHH:mm:ss.xxxZ)
-// to a date that we can save in MySQL. Removes the "T"
-// separator, drops the milliseconds and the "Z" marker.
-func fromZDate(zdate string) string {
-	date := zdate[0:10] + " " + zdate[11:19]
-	return date
 }

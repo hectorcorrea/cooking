@@ -125,10 +125,13 @@ func (b *Recipe) Import() error {
 	b.Slug = getSlug(b.Name)
 
 	sqlUpdate := `
-		INSERT INTO recipes(id, name, slug, ingredients, directions, notes, starred, shopping)
-		VALUES(?, ?, ?, ?, ?, ?, ?, ?)`
+		INSERT INTO recipes(id, name, slug,
+			ingredients, directions, notes,
+			starred, shopping, createdOn)
+		VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)`
 	_, err = db.Exec(sqlUpdate, b.Id, b.Name, b.Slug,
-		b.Ingredients, b.Directions, b.Notes, 0, 0)
+		b.Ingredients, b.Directions, b.Notes,
+		0, 0, dbUtcNow())
 	return err
 }
 
