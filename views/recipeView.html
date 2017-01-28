@@ -1,0 +1,24 @@
+{{ define "content" }}
+<h1>{{.Name}}</h1>
+
+<h2>Ingredients</h2>
+<div>{{.Ingredients}}</div>
+
+<h2>Directions</h2>
+<div>{{.Directions}}</div>
+
+<h2>Notes</h2>
+<div>{{.Notes}}</div>
+<br/>
+
+<form action="{{ .Url }}/edit" method="post">
+  <div class="form-group">
+    <button type="submit" class="btn btn-primary">Edit</button>
+  </div>
+</form>
+
+<p class="text-muted">
+  <small>Created on: {{ .CreatedOn }}, Last update: {{ .UpdatedOn }}</small>
+</p>
+
+{{ end }}
