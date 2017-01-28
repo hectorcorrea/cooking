@@ -9,6 +9,8 @@ Angular.js is used to handle the client-side part of the project including makin
 
 This means that there is an MVC framework in the server side (Express.js) and another in the client-side (Angular.js).
 
+NOTE: This was the last version of the code in Node.js
+
 
 Requirements
 ------------
@@ -21,36 +23,35 @@ Clone this repo to your local machine:
 Install the dependencies:
 
     cd ~/dev/cooking
-    npm install 
+    npm install
 
 
 How to run the site
 -------------------
 Download the source code and install the requirements listed above.
 
-To kick off the application, just run the following command from the Terminal window: 
+To kick off the application, just run the following command from the Terminal window:
 
-    node server 
+    node server
 
 ...and browse to your *http://localhost:3000* You should see the web site. Enjoy it!
 
 
 Structure of the source code
 ----------------------------
-Server Side: 
+Server Side:
 
 * **server.js** is the main file. This file mainly setups the environment.
-* **\models:** JavaScript files with the server-side models and database access code. 
+* **\models:** JavaScript files with the server-side models and database access code.
 * **\routes\recipeRoutes.js:** is the server-side controller. This code is the one that parses requests, contacts the database, and returns the data to the client. All data is returned in JSON.
 * **\views\index.ejs:** This is the only server-side view. It's basically a template on which different partial views will be injected client-side by Angular.js
 
 Client Side:
 
-* **\public\js\app.js:** This file configures Angular.js to handle each route, switch views, and process the data coming from the server. 
+* **\public\js\app.js:** This file configures Angular.js to handle each route, switch views, and process the data coming from the server.
 * **\public\partials:** These are the views that Angular.js uses to display data.
 
 
 Questions, comments, thoughts?
 ------------------------------
 Feel free to contact me with questions or comments about this project.
-
