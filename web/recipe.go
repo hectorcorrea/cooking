@@ -63,11 +63,6 @@ func recipeViewAll(s session, values map[string]string) {
 }
 
 func recipeSave(s session, values map[string]string) {
-	if !s.isAuth() {
-		renderNotAuthorized(s)
-		return
-	}
-
 	id := idFromString(values["id"])
 	blog := blogFromForm(id, s)
 	if err := blog.Save(); err != nil {
@@ -80,10 +75,6 @@ func recipeSave(s session, values map[string]string) {
 }
 
 func recipeNew(s session, values map[string]string) {
-	if !s.isAuth() {
-		renderNotAuthorized(s)
-		return
-	}
 	newId, err := models.SaveNew()
 	if err != nil {
 		renderError(s, fmt.Sprintf("Error creating new blog"), err)
@@ -95,10 +86,6 @@ func recipeNew(s session, values map[string]string) {
 }
 
 func recipeEdit(s session, values map[string]string) {
-	if !s.isAuth() {
-		renderNotAuthorized(s)
-		return
-	}
 	id := idFromString(values["id"])
 	if id == 0 {
 		renderError(s, "No blog ID was received", nil)
