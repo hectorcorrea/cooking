@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
+	"strings"
 )
 
 type LegacyRecipe struct {
@@ -40,13 +41,17 @@ func ImportOne(fileName string) error {
 	blog := Recipe{}
 	blog.Id = int64(legacy.Key)
 	blog.Name = legacy.Name
-	blog.Ingredients = legacy.Ingredients
-	blog.Directions = legacy.Directions
-	blog.Notes = legacy.Notes
+	blog.Ingredients = textWithLinebreaks(legacy.Ingredients)
+	blog.Directions = textWithLinebreaks(legacy.Directions)
+	blog.Notes = textWithLinebreaks(legacy.Notes)
 
 	err = blog.Import()
 	if err != nil {
 		log.Printf("ERROR: %s", err)
 	}
 	return err
+}
+
+func textWithLinebreaks(text string) string {
+	return strings.Replace(text, "<br/>", "\r\n", -1)
 }
