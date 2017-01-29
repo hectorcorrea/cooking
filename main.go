@@ -9,7 +9,7 @@ import (
 )
 
 func main() {
-	var address = flag.String("address", "localhost:9001", "Address where server will listen for connections")
+	var address = flag.String("address", "localhost:3002", "Address where server will listen for connections")
 	var importer = flag.String("import", "", "Name of file to import legacy blog from")
 	flag.Parse()
 	if *importer != "" {
