@@ -1,0 +1,26 @@
+{{ define "content" }}
+<form class="form-horizontal" role="form" action="/search" method="post">
+
+  <h3>Search</h3>
+  <input type="text" id="searchText" name="searchText" class="form-control"
+    value="{{ .Text }}" placeholder="enter something" autofocus/>
+  <button type="submit" class="btn btn-primary">Search</button>
+
+  {{ if ne .Text "" }}
+    {{ if eq .Count 0 }}
+      <p>No recipes were found for <b>{{ .Text }}</b></p>
+    {{ else }}
+      <p><b>{{.Count }}</b> recipes were found for <b>{{ .Text }}</b></p>
+    {{ end }}
+  {{ end }}
+
+  <div class="row">
+    <ul>
+    {{ range $key, $blog := .Recipes.Recipes }}
+        <li><a href="{{ $blog.Url }}">{{ $blog.Name }}</a>
+    {{ end }}
+  </ul>
+  </div>
+
+</form>
+{{ end }}

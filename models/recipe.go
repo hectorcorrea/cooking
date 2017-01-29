@@ -30,11 +30,15 @@ func (r Recipe) URL(base string) string {
 }
 
 func RecipeGetAll() ([]Recipe, error) {
-	return getAll()
+	return getSearch("")
 }
 
 func RecipeGetById(id int64) (Recipe, error) {
 	return getOne(id)
+}
+
+func Search(text string) ([]Recipe, error) {
+	return getSearch(text)
 }
 
 func (b *Recipe) beforeSave() error {
@@ -166,15 +170,33 @@ func getOne(id int64) (Recipe, error) {
 	return recipe, nil
 }
 
-func getAll() ([]Recipe, error) {
+func getSearch(text string) ([]Recipe, error) {
 	db, err := connectDB()
 	if err != nil {
 		return nil, err
 	}
 	defer db.Close()
 
-	sqlSelect := `SELECT id, name, slug FROM recipes ORDER BY name`
-	rows, err := db.Query(sqlSelect)
+	var rows *sql.Rows
+	sqlSelect := ""
+	if text == "" {
+		sqlSelect = `
+			SELECT id, name, slug
+			FROM recipes
+			ORDER BY name`
+		rows, err = db.Query(sqlSelect)
+	} else {
+		sqlSelect = `
+			SELECT id, name, slug
+			FROM recipes
+			WHERE name LIKE ? OR
+				ingredients LIKE ? OR
+				directions LIKE ? OR
+				notes LIKE ?
+			ORDER BY name`
+		likeText := "%" + text + "%"
+		rows, err = db.Query(sqlSelect, likeText, likeText, likeText, likeText)
+	}
 	if err != nil {
 		return nil, err
 	}

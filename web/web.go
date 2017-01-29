@@ -25,6 +25,7 @@ func StartWebServer(address string) {
 	http.Handle("/favicon.png", fs)
 	http.Handle("/robots.txt", fs)
 	http.Handle("/public/", http.StripPrefix("/public/", fs))
+	http.HandleFunc("/search", searchPages)
 	http.HandleFunc("/recipe/", recipePages)
 	http.HandleFunc("/", homePage)
 
