@@ -1,0 +1,21 @@
+{{ define "content" }}
+
+<h1>All Recipes</h1>
+
+<div class="row">
+  <ul>
+  {{ range $key, $blog := .Recipes }}
+      <li><a href="{{ $blog.Url }}">{{ $blog.Name }}</a>
+  {{ end }}
+</ul>
+</div>
+
+<div class="row">
+  <p>
+    <form action="/recipe/new" method="post">
+      <button class="btn btn-primary" type="submit">New Recipe</button>
+    </form>
+  </p>
+</div>
+
+{{ end }}

@@ -1,0 +1,38 @@
+{{ define "content" }}
+<form class="form-horizontal" role="form" action="{{ .Url }}/save" method="post">
+
+  <div class="form-group">
+    <label for="title">Name</label>
+    <input type="text" id="title" name="title" class="form-control"
+      value="{{ .Name }}" placeholder="Recipe name" autofocus/>
+  </div>
+
+  <div class="form-group">
+    <label for="summary">Ingredients</label>
+    <textarea id="ingredients" name="ingredients" class="form-control" rows="10"
+      placeholder="Enter ingredients here">{{ .Ingredients }}</textarea>
+  </div>
+
+  <div class="form-group">
+    <label for="directions">Directions</label>
+    <textarea id="directions" name="directions" class="form-control" rows="10"
+      placeholder="Enter directions here">{{ .Directions }}</textarea>
+  </div>
+
+  <div class="form-group">
+    <label for="notes">Notes</label>
+    <textarea id="notes" name="notes" class="form-control" rows="10"
+      placeholder="Enter notes here">{{ .Notes }}</textarea>
+  </div>
+
+  <div class="form-group">
+      <button type="submit" class="btn btn-primary">Save</button>
+  </div>
+
+  <!-- add placeholder to display errors -->
+  <p>ID: {{ .Id }}<p/>
+  <p>Created: {{ .CreatedOn }}</p>
+  <p>Updated: {{ .UpdatedOn }}</p>
+
+</form>
+{{ end }}
