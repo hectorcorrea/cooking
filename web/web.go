@@ -38,8 +38,7 @@ func StartWebServer(address string) {
 func homePage(resp http.ResponseWriter, req *http.Request) {
 	session := newSession(resp, req)
 	if req.URL.Path == "/" {
-		values := make(map[string]string)
-		recipeViewAll(session, values)
+		search(session)
 	} else {
 		cacheResponse(resp)
 		renderNotFound(session)
