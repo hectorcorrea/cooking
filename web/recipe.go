@@ -66,7 +66,7 @@ func recipeSave(s session, values map[string]string) {
 	id := idFromString(values["id"])
 	blog := blogFromForm(id, s)
 	if err := blog.Save(); err != nil {
-		renderError(s, fmt.Sprintf("Saving blog ID: %d"), err)
+		renderError(s, fmt.Sprintf("Saving blog ID: %d", id), err)
 	} else {
 		url := blog.URL("")
 		log.Printf("Redirect to %s", url)
@@ -75,13 +75,13 @@ func recipeSave(s session, values map[string]string) {
 }
 
 func recipeNew(s session, values map[string]string) {
-	newId, err := models.SaveNew()
+	newID, err := models.SaveNew()
 	if err != nil {
 		renderError(s, fmt.Sprintf("Error creating new blog"), err)
 		return
 	}
-	log.Printf("Redirect to (edit for new) %d", newId)
-	values["id"] = fmt.Sprintf("%d", newId)
+	log.Printf("Redirect to (edit for new) %d", newID)
+	values["id"] = fmt.Sprintf("%d", newID)
 	recipeEdit(s, values)
 }
 
