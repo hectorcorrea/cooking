@@ -1,3 +1,4 @@
+# Execute as mysql < createdb.sql
 CREATE DATABASE cookingdb;
 
 USE cookingdb;
