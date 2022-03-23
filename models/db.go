@@ -7,15 +7,6 @@ import (
 	"github.com/hectorcorrea/texto/textdb"
 )
 
-type DbSettings struct {
-	driver     string
-	user       string
-	password   string
-	database   string
-	connString string
-}
-
-var dbSettings DbSettings
 var textDb textdb.TextDb
 
 func InitDB() {
