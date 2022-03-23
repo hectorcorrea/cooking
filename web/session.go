@@ -2,16 +2,11 @@ package web
 
 import (
 	"net/http"
-
-	"cooking/viewModels"
 )
 
 type session struct {
-	resp      http.ResponseWriter
-	req       *http.Request
-	cookie    *http.Cookie
-	loginName string
-	sessionId string
+	resp http.ResponseWriter
+	req  *http.Request
 }
 
 func newSession(resp http.ResponseWriter, req *http.Request) session {
@@ -20,11 +15,4 @@ func newSession(resp http.ResponseWriter, req *http.Request) session {
 		req:  req,
 	}
 	return s
-}
-
-func (s *session) logout() {
-}
-
-func (s session) toViewModel() viewModels.Session {
-	return viewModels.NewSession(s.sessionId, s.loginName, false)
 }

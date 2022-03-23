@@ -28,8 +28,8 @@ func searchDo(s session) {
 	if err != nil {
 		renderError(s, "Error on search", err)
 	} else {
-		recipes := viewModels.FromRecipes(recipes, s.toViewModel())
-		vm := viewModels.FromResults(searchText, recipes, s.toViewModel())
+		recipes := viewModels.FromRecipes(recipes)
+		vm := viewModels.FromResults(searchText, recipes)
 		renderTemplate(s, "views/search.html", vm)
 	}
 }

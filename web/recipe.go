@@ -47,7 +47,7 @@ func recipeViewOne(s session, values map[string]string) {
 		return
 	}
 
-	vm := viewModels.FromRecipe(blog, s.toViewModel(), true)
+	vm := viewModels.FromRecipe(blog, true)
 	renderTemplate(s, "views/recipeView.html", vm)
 }
 
@@ -56,7 +56,7 @@ func recipeViewAll(s session, values map[string]string) {
 	if blogs, err := models.RecipeGetAll(); err != nil {
 		renderError(s, "Error fetching all", err)
 	} else {
-		vm := viewModels.FromRecipes(blogs, s.toViewModel())
+		vm := viewModels.FromRecipes(blogs)
 		renderTemplate(s, "views/recipeList.html", vm)
 	}
 }
@@ -99,7 +99,7 @@ func recipeEdit(s session, values map[string]string) {
 		return
 	}
 
-	vm := viewModels.FromRecipe(blog, s.toViewModel(), false)
+	vm := viewModels.FromRecipe(blog, false)
 	renderTemplate(s, "views/recipeEdit.html", vm)
 }
 
