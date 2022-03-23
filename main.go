@@ -2,9 +2,7 @@ package main
 
 import (
 	"flag"
-	"log"
 
-	"cooking/models"
 	"cooking/web"
 )
 
@@ -20,9 +18,5 @@ func main() {
 }
 
 func importOne(fileName string) {
-	if err := models.InitDB(); err != nil {
-		log.Fatal("Failed to initialize database: ", err)
-	}
-	log.Printf("Database: %s", models.DbConnStringSafe())
-	models.ImportOne(fileName)
+	// TODO
 }

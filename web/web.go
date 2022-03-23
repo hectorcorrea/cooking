@@ -15,9 +15,7 @@ import (
 func StartWebServer(address string) {
 	log.Printf("Listening for requests at %s\n", "http://"+address)
 
-	if err := models.InitDB(); err != nil {
-		log.Print("ERROR: Failed to initialize database: ", err)
-	}
+	models.InitDB()
 	log.Printf("Database: %s", models.DbConnStringSafe())
 
 	fs := http.FileServer(http.Dir("./public"))

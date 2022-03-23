@@ -34,14 +34,13 @@ func recipePages(resp http.ResponseWriter, req *http.Request) {
 }
 
 func recipeViewOne(s session, values map[string]string) {
-	id := idFromString(values["id"])
-	log.Println(values)
-	if id == 0 {
+	id := values["id"]
+	if id == "" {
 		renderError(s, "No Recipe ID was received", nil)
 		return
 	}
 
-	log.Printf("Loading %d", id)
+	log.Printf("Loading %s", id)
 	blog, err := models.RecipeGetById(id)
 	if err != nil {
 		renderError(s, "Fetching by ID", err)
@@ -63,15 +62,16 @@ func recipeViewAll(s session, values map[string]string) {
 }
 
 func recipeSave(s session, values map[string]string) {
-	id := idFromString(values["id"])
+	id := values["id"]
 	blog := blogFromForm(id, s)
-	if err := blog.Save(); err != nil {
-		renderError(s, fmt.Sprintf("Saving blog ID: %d", id), err)
-	} else {
-		url := blog.URL("")
-		log.Printf("Redirect to %s", url)
-		http.Redirect(s.resp, s.req, url, 301)
+	blogSaved, err := blog.Save()
+	if err != nil {
+		renderError(s, fmt.Sprintf("Saving blog ID: %s", id), err)
+		return
 	}
+	url := blogSaved.URL("")
+	log.Printf("Redirect to %s", url)
+	http.Redirect(s.resp, s.req, url, 301)
 }
 
 func recipeNew(s session, values map[string]string) {
@@ -80,22 +80,22 @@ func recipeNew(s session, values map[string]string) {
 		renderError(s, fmt.Sprintf("Error creating new blog"), err)
 		return
 	}
-	log.Printf("Redirect to (edit for new) %d", newID)
-	values["id"] = fmt.Sprintf("%d", newID)
+	log.Printf("Redirect to (edit for new) %s", newID)
+	values["id"] = newID
 	recipeEdit(s, values)
 }
 
 func recipeEdit(s session, values map[string]string) {
-	id := idFromString(values["id"])
-	if id == 0 {
+	id := values["id"]
+	if id == "" {
 		renderError(s, "No blog ID was received", nil)
 		return
 	}
 
-	log.Printf("Loading %d", id)
+	log.Printf("Loading %s", id)
 	blog, err := models.RecipeGetById(id)
 	if err != nil {
-		renderError(s, fmt.Sprintf("Loading ID: %d", id), err)
+		renderError(s, fmt.Sprintf("Loading ID: %s", id), err)
 		return
 	}
 
@@ -108,7 +108,7 @@ func idFromString(str string) int64 {
 	return id
 }
 
-func blogFromForm(id int64, s session) models.Recipe {
+func blogFromForm(id string, s session) models.Recipe {
 	var blog models.Recipe
 	blog.Id = id
 	blog.Name = s.req.FormValue("title")

@@ -8,7 +8,7 @@ import (
 )
 
 type Recipe struct {
-	Id          int64
+	Id          string
 	Name        string
 	Slug        string
 	Url         string
