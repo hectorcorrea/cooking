@@ -8,10 +8,6 @@ type Session struct {
 	IsAuth    bool
 }
 
-func NewSession(id, loginName string, isAuth bool) Session {
-	return Session{
-		Id:        id,
-		LoginName: loginName,
-		IsAuth:    isAuth,
-	}
+func xxxNewSession(id, loginName string, isAuth bool) Session {
+	return Session{}
 }
