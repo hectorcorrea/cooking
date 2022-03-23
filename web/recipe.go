@@ -12,17 +12,16 @@ import (
 
 var recipeRouter Router
 
-func recipePages(resp http.ResponseWriter, req *http.Request) {
-
+func init() {
 	// This should be initialized only once, not on every call.
 	recipeRouter.Add("GET", "/recipe/:title/:id", recipeViewOne)
 	recipeRouter.Add("GET", "/recipe", recipeViewAll)
 	recipeRouter.Add("POST", "/recipe/:title/:id/edit", recipeEdit)
 	recipeRouter.Add("POST", "/recipe/:title/:id/save", recipeSave)
-	// recipeRouter.Add("POST", "/blog/:title/:id/post", blogPost)
-	// recipeRouter.Add("POST", "/blog/:title/:id/draft", blogDraft)
 	recipeRouter.Add("POST", "/recipe/new", recipeNew)
+}
 
+func recipePages(resp http.ResponseWriter, req *http.Request) {
 	session := newSession(resp, req)
 	found, route := recipeRouter.FindRoute(req.Method, req.URL.Path)
 	if found {

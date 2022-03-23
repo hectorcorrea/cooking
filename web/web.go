@@ -65,23 +65,6 @@ func renderNotFound(s session) {
 	}
 }
 
-func renderNotAuthorized(s session) {
-	// TODO: log more about the Request
-	title := "Not Authorized"
-	details := fmt.Sprintf("You are not authorized to perform this action: %s %s",
-		s.req.Method, s.req.URL.Path)
-	log.Printf(fmt.Sprintf("%s: %s", title, details))
-	vm := viewModels.NewErrorFromStr(title, details)
-	t, err := template.New("layout").ParseFiles("views/layout.html", "views/error.html")
-	if err != nil {
-		log.Printf("Error rendering not authorized page :(")
-		// perhaps render a hard coded string?
-	} else {
-		s.resp.WriteHeader(http.StatusUnauthorized)
-		t.Execute(s.resp, vm)
-	}
-}
-
 func renderError(s session, title string, err error) {
 	// I don't like that we have a reference to sql in here.
 	// The web should not be aware of the DB.
