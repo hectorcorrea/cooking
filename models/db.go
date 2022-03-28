@@ -10,7 +10,7 @@ import (
 var textDb textdb.TextDb
 
 func InitDB() {
-	rootDir := env("DB_ROOT_DIR", "./textdb")
+	rootDir := env("DB_ROOT_DIR", "./data")
 	textDb = textdb.InitTextDb(rootDir)
 }
 

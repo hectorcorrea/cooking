@@ -66,7 +66,13 @@ func (r *Recipe) Save() (Recipe, error) {
 }
 
 func (b *Recipe) Import() error {
-	// TODO
+	entry, err := textDb.NewEntry()
+	if err != nil {
+		return err
+	}
+
+	b.Id = entry.Id
+	b.Save()
 	return nil
 }
 
