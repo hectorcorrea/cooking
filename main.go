@@ -13,7 +13,7 @@ import (
 )
 
 func main() {
-	var address = flag.String("address", "localhost:3002", "Address where server will listen for connections")
+	var address = flag.String("address", "localhost:9001", "Address where server will listen for connections")
 	var importer = flag.Bool("import", false, "True to import data from MySQL")
 	flag.Parse()
 	if *importer == true {
