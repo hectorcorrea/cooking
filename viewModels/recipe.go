@@ -8,7 +8,7 @@ import (
 )
 
 type Recipe struct {
-	Id          int64
+	Id          string
 	Name        string
 	Slug        string
 	Url         string
@@ -19,15 +19,13 @@ type Recipe struct {
 	UpdatedOn   string
 	IsFavorite  bool
 	IsShopping  bool
-	Session
 }
 
 type RecipeList struct {
 	Recipes []Recipe
-	Session
 }
 
-func FromRecipe(blog models.Recipe, session Session, linebreaks bool) Recipe {
+func FromRecipe(blog models.Recipe, linebreaks bool) Recipe {
 	var vm Recipe
 	vm.Id = blog.Id
 	vm.Name = blog.Name
@@ -40,16 +38,15 @@ func FromRecipe(blog models.Recipe, session Session, linebreaks bool) Recipe {
 	vm.UpdatedOn = blog.UpdatedOn
 	vm.IsFavorite = false
 	vm.IsShopping = false
-	vm.Session = session
 	return vm
 }
 
-func FromRecipes(blogs []models.Recipe, session Session) RecipeList {
+func FromRecipes(blogs []models.Recipe) RecipeList {
 	var list []Recipe
 	for _, blog := range blogs {
-		list = append(list, FromRecipe(blog, session, true))
+		list = append(list, FromRecipe(blog, true))
 	}
-	return RecipeList{Recipes: list, Session: session}
+	return RecipeList{Recipes: list}
 }
 
 func toHTML(text string, linebreaks bool) template.HTML {

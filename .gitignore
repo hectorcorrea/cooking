@@ -1,1 +1,6 @@
 data/
+
+run.sh
+.DS_Store
+cooking
+cooking.tar.gz

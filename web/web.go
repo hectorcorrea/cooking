@@ -15,9 +15,7 @@ import (
 func StartWebServer(address string) {
 	log.Printf("Listening for requests at %s\n", "http://"+address)
 
-	if err := models.InitDB(); err != nil {
-		log.Print("ERROR: Failed to initialize database: ", err)
-	}
+	models.InitDB()
 	log.Printf("Database: %s", models.DbConnStringSafe())
 
 	fs := http.FileServer(http.Dir("./public"))
@@ -63,24 +61,7 @@ func renderNotFound(s session) {
 		// perhaps render a hard coded string?
 	} else {
 		s.resp.WriteHeader(http.StatusNotFound)
-		t.Execute(s.resp, s.toViewModel())
-	}
-}
-
-func renderNotAuthorized(s session) {
-	// TODO: log more about the Request
-	title := "Not Authorized"
-	details := fmt.Sprintf("You are not authorized to perform this action: %s %s",
-		s.req.Method, s.req.URL.Path)
-	log.Printf(fmt.Sprintf("%s: %s", title, details))
-	vm := viewModels.NewErrorFromStr(title, details, s.toViewModel())
-	t, err := template.New("layout").ParseFiles("views/layout.html", "views/error.html")
-	if err != nil {
-		log.Printf("Error rendering not authorized page :(")
-		// perhaps render a hard coded string?
-	} else {
-		s.resp.WriteHeader(http.StatusUnauthorized)
-		t.Execute(s.resp, vm)
+		t.Execute(s.resp, nil)
 	}
 }
 
@@ -95,7 +76,7 @@ func renderError(s session, title string, err error) {
 
 	// TODO: log more about the Request
 	log.Printf("ERROR: %s - %s", title, err)
-	vm := viewModels.NewError(title, err, s.toViewModel())
+	vm := viewModels.NewError(title, err)
 	t, err := template.New("layout").ParseFiles("views/layout.html", "views/error.html")
 	if err != nil {
 		log.Printf("Error rendering error page :(")
