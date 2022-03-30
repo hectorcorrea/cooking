@@ -6,8 +6,7 @@ echo "Creating tarball..."
 tar -czvf cooking.tar.gz \
   cooking \
   views/* \
-  public/* \
-  data/* 
+  public/* 
 
 echo "Copying to the remote server"
 scp cooking.tar.gz ubuntu20:.
