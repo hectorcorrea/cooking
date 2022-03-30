@@ -2,8 +2,9 @@ package models
 
 import (
 	"fmt"
+	"strings"
 
-	"github.com/hectorcorrea/texto/textdb"
+	"github.com/hectorcorrea/textodb"
 )
 
 type Recipe struct {
@@ -40,7 +41,7 @@ func Search(text string) ([]Recipe, error) {
 }
 
 func SaveNew() (string, error) {
-	entry, err := textDb.NewEntry()
+	entry, err := db.NewEntry()
 	if err != nil {
 		return "", err
 	}
@@ -48,7 +49,7 @@ func SaveNew() (string, error) {
 }
 
 func (r *Recipe) Save() (Recipe, error) {
-	entry, err := textDb.FindById(r.Id)
+	entry, err := db.FindById(r.Id)
 	if err != nil {
 		return Recipe{}, err
 	}
@@ -57,7 +58,7 @@ func (r *Recipe) Save() (Recipe, error) {
 	entry.SetField("ingredients", r.Ingredients)
 	entry.SetField("directions", r.Directions)
 	entry.SetField("notes", r.Notes)
-	entry, err = textDb.UpdateEntry(entry)
+	entry, err = db.UpdateEntry(entry)
 	if err != nil {
 		return Recipe{}, err
 	}
@@ -66,7 +67,7 @@ func (r *Recipe) Save() (Recipe, error) {
 }
 
 func (b *Recipe) Import() error {
-	entry, err := textDb.NewEntry()
+	entry, err := db.NewEntry()
 	if err != nil {
 		return err
 	}
@@ -77,7 +78,7 @@ func (b *Recipe) Import() error {
 }
 
 func getOne(id string) (Recipe, error) {
-	entry, err := textDb.FindById(id)
+	entry, err := db.FindById(id)
 	if err != nil {
 		return Recipe{}, err
 	}
@@ -85,7 +86,7 @@ func getOne(id string) (Recipe, error) {
 	return recipe, nil
 }
 
-func recipeFromEntry(entry textdb.TextEntry) Recipe {
+func recipeFromEntry(entry textodb.TextoEntry) Recipe {
 	var recipe Recipe
 	recipe.Id = entry.Id
 	recipe.Name = entry.Title
@@ -101,9 +102,37 @@ func recipeFromEntry(entry textdb.TextEntry) Recipe {
 func getSearch(text string) ([]Recipe, error) {
 	// TODO: implement search
 	var recipes []Recipe
-	for _, entry := range textDb.All() {
+	for _, entry := range db.All() {
 		recipe := recipeFromEntry(entry)
-		recipes = append(recipes, recipe)
+		if recipe.Contains(text) {
+			recipes = append(recipes, recipe)
+		}
+
 	}
 	return recipes, nil
+}
+
+// The most inefficient search but it will do for now.
+func (r *Recipe) Contains(text string) bool {
+	textClean := strings.TrimSpace(strings.ToLower(text))
+	if stringContains(r.Name, textClean) {
+		return true
+	}
+
+	if stringContains(r.Ingredients, textClean) {
+		return true
+	}
+
+	if stringContains(r.Directions, textClean) {
+		return true
+	}
+
+	if stringContains(r.Notes, textClean) {
+		return true
+	}
+	return false
+}
+
+func stringContains(text string, substring string) bool {
+	return strings.Contains(strings.ToLower(text), substring)
 }

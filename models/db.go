@@ -4,18 +4,18 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/hectorcorrea/texto/textdb"
+	"github.com/hectorcorrea/textodb"
 )
 
-var textDb textdb.TextDb
+var db textodb.TextoDb
 
 func InitDB() {
 	rootDir := env("DB_ROOT_DIR", "./data")
-	textDb = textdb.InitTextDb(rootDir)
+	db = textodb.InitTextDb(rootDir)
 }
 
 func DbConnStringSafe() string {
-	return fmt.Sprintf("rootDir:%s", textDb.RootDir)
+	return fmt.Sprintf("rootDir:%s", db.RootDir)
 }
 
 func env(key, defaultValue string) string {
