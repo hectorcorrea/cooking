@@ -11,7 +11,7 @@ var db textodb.TextoDb
 
 func InitDB() {
 	rootDir := env("DB_ROOT_DIR", "./data")
-	db = textodb.InitTextDb(rootDir)
+	db = textodb.InitTextoDb(rootDir)
 }
 
 func DbConnStringSafe() string {
