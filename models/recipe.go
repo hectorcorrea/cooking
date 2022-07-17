@@ -2,6 +2,7 @@ package models
 
 import (
 	"fmt"
+	"sort"
 	"strings"
 
 	"github.com/hectorcorrea/textodb"
@@ -29,7 +30,8 @@ func (r Recipe) URL(base string) string {
 }
 
 func RecipeGetAll() ([]Recipe, error) {
-	return getSearch("")
+	recipes := getSearch("")
+	return recipes, nil
 }
 
 func RecipeGetById(id string) (Recipe, error) {
@@ -37,7 +39,8 @@ func RecipeGetById(id string) (Recipe, error) {
 }
 
 func Search(text string) ([]Recipe, error) {
-	return getSearch(text)
+	recipes := getSearch(text)
+	return recipes, nil
 }
 
 func SaveNew() (string, error) {
@@ -99,9 +102,8 @@ func recipeFromEntry(entry textodb.TextoEntry) Recipe {
 	return recipe
 }
 
-func getSearch(text string) ([]Recipe, error) {
-	// TODO: implement search
-	var recipes []Recipe
+func getSearch(text string) RecipeList {
+	var recipes RecipeList
 	for _, entry := range db.All() {
 		recipe := recipeFromEntry(entry)
 		if recipe.Contains(text) {
@@ -109,7 +111,9 @@ func getSearch(text string) ([]Recipe, error) {
 		}
 
 	}
-	return recipes, nil
+
+	sort.Sort(recipes)
+	return recipes
 }
 
 // The most inefficient search but it will do for now.
